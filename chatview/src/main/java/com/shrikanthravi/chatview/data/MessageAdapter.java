@@ -1202,7 +1202,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             holder1.leftTimeTV.setText(message.getTime());
 
             if (message.getUserIcon() != null) {
-                Picasso.with(context).load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
+                Picasso.get().load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
             }
             holder1.senderNameTV.setText(message.getUserName());
         } else {
@@ -1213,7 +1213,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 holder1.rightTV.setText(message.getBody());
                 holder1.rightTimeTV.setText(message.getTime());
                 if (message.getUserIcon() != null) {
-                    Picasso.with(context).load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
+                    Picasso.get().load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
                 }
                 holder1.senderNameTV.setText(message.getUserName());
             } else {
@@ -1223,13 +1223,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     final LeftImageViewHolder holder1 = (LeftImageViewHolder) holder;
 
                     if (message.getUserIcon() != null) {
-                        Picasso.with(context).load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
+                        Picasso.get().load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
                     }
                     holder1.senderNameTV.setText(message.getUserName());
                     if (message.getImageList().get(0) != null && !message.getImageList().get(0).equals("")) {
                         final File image = DiskCacheUtils.findInCache(message.getImageList().get(0).toString(), imageLoader.getDiskCache());
                         if (image != null && image.exists()) {
-                            Picasso.with(context).load(image).into(holder1.leftIV);
+                            Picasso.get().load(image).into(holder1.leftIV);
                         } else {
                             imageLoader.loadImage(message.getImageList().get(0).toString(), new ImageLoadingListener() {
                                 @Override
@@ -1244,7 +1244,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                 @Override
                                 public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
-                                    Picasso.with(context).load(s).into(holder1.leftIV);
+                                    Picasso.get().load(s).into(holder1.leftIV);
 
                                 }
 
@@ -1277,14 +1277,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         final RightImageViewHolder holder1 = (RightImageViewHolder) holder;
 
                         if (message.getUserIcon() != null) {
-                            Picasso.with(context).load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
+                            Picasso.get().load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
                         }
                         holder1.senderNameTV.setText(message.getUserName());
 
                         if (message.getImageList().get(0) != null && !message.getImageList().get(0).equals("")) {
                             final File image = DiskCacheUtils.findInCache(message.getImageList().get(0).toString(), imageLoader.getDiskCache());
                             if (image != null && image.exists()) {
-                                Picasso.with(context).load(image).into(holder1.rightIV);
+                                Picasso.get().load(image).into(holder1.rightIV);
                             } else {
                                 imageLoader.loadImage(message.getImageList().get(0).toString(), new ImageLoadingListener() {
                                     @Override
@@ -1299,7 +1299,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                     @Override
                                     public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
-                                        Picasso.with(context).load(s).into(holder1.rightIV);
+                                        Picasso.get().load(s).into(holder1.rightIV);
 
                                     }
 
@@ -1331,7 +1331,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             final LeftImagesViewHolder holder1 = (LeftImagesViewHolder) holder;
 
                             if (message.getUserIcon() != null) {
-                                Picasso.with(context).load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
+                                Picasso.get().load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
                             }
                             holder1.senderNameTV.setText(message.getUserName());
 
@@ -1368,7 +1368,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 final RightImagesViewHolder holder1 = (RightImagesViewHolder) holder;
 
                                 if (message.getUserIcon() != null) {
-                                    Picasso.with(context).load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
+                                    Picasso.get().load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
                                 }
                                 holder1.senderNameTV.setText(message.getUserName());
                                 List<String> imageList = new ArrayList<>();
@@ -1409,7 +1409,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                         final LeftVideoViewHolder holder1 = (LeftVideoViewHolder) holder;
 
                                         if (message.getUserIcon() != null) {
-                                            Picasso.with(context).load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
+                                            Picasso.get().load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
                                         }
                                         holder1.senderNameTV.setText(message.getUserName());
                                         holder1.leftTimeTV.setText(message.getTime());
@@ -1562,7 +1562,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                             final RightVideoViewHolder holder1 = (RightVideoViewHolder) holder;
 
                                             if (message.getUserIcon() != null) {
-                                                Picasso.with(context).load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
+                                                Picasso.get().load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
                                             }
                                             holder1.senderNameTV.setText(message.getUserName());
                                             holder1.rightTimeTV.setText(message.getTime());
@@ -1715,7 +1715,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                 holder1.leftTimeTV.setText(message.getTime());
                                                 if (message.getUserIcon() != null) {
-                                                    Picasso.with(context).load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
+                                                    Picasso.get().load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
                                                 }
                                                 holder1.senderNameTV.setText(message.getUserName());
 
@@ -1790,7 +1790,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                     holder1.rightTimeTV.setText(message.getTime());
                                                     if (message.getUserIcon() != null) {
-                                                        Picasso.with(context).load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
+                                                        Picasso.get().load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
                                                     }
                                                     holder1.senderNameTV.setText(message.getUserName());
 

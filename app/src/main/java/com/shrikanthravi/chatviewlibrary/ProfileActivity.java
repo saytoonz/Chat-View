@@ -29,7 +29,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         topBgIV = findViewById(R.id.topBgIV);
 
-        Picasso.with(getApplicationContext()).load("file:///android_asset/top_bg1.jpg").into(topBgIV);
+        Picasso.get().load("file:///android_asset/top_bg1.jpg").into(topBgIV);
     }
     @Override
     public void onBackPressed() {

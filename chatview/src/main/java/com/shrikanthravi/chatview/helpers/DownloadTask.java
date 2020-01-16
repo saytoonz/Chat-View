@@ -63,12 +63,21 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
         InputStream input = null;
         OutputStream output = null;
         HttpURLConnection connection = null;
-        String fullPath = Environment.getExternalStorageDirectory().getPath()+ sUrl_fileName[1] +sUrl_fileName[2];
+        String fullPath = Environment.getExternalStorageDirectory().getPath() + sUrl_fileName[1] + sUrl_fileName[2];
         try {
-            File dir = new File(Environment.getExternalStorageDirectory().getPath()+ sUrl_fileName[1]);
+            File dir = new File(Environment.getExternalStorageDirectory().getPath() + sUrl_fileName[1]);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
+
+            File file = new File(Environment.getExternalStorageDirectory().getPath() + sUrl_fileName[1] + "/.nomedia");
+            try {
+                if (!file.exists() && sUrl_fileName[1].contains("Sent"))
+                    file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             URL url = new URL(sUrl_fileName[0]);
             connection = (HttpURLConnection) url.openConnection();
             connection.connect();
@@ -131,16 +140,16 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPostExecute(String result) {
 //        mWakeLock.release();
-        if (result == null){
+        if (result == null) {
             Toast.makeText(context, "Download error", Toast.LENGTH_LONG).show();
             downloadImageView.setVisibility(View.VISIBLE);
             adCircleProgress.setVisibility(View.GONE);
         } else {
-            if (result.contains("/FrenzApp/Media/Videos/")){
+            if (result.contains("/FrenzApp/Media/Videos/")) {
                 message.setVideoLocalLocation(result);
-            }else if (result.contains("/FrenzApp/Media/Audios/")){
+            } else if (result.contains("/FrenzApp/Media/Audios/")) {
                 message.setAudioLocalLocation(result);
-            }else if (result.contains("/FrenzApp/Media/Images/")){
+            } else if (result.contains("/FrenzApp/Media/Images/")) {
                 message.setImageLocalLocation(result);
             }
             updater();
