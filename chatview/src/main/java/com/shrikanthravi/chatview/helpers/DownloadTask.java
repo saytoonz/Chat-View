@@ -67,7 +67,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
         try {
             File dir = new File(Environment.getExternalStorageDirectory().getPath()+ sUrl_fileName[1]);
             if (!dir.exists()) {
-                dir.mkdir();
+                dir.mkdirs();
             }
             URL url = new URL(sUrl_fileName[0]);
             connection = (HttpURLConnection) url.openConnection();
@@ -136,7 +136,13 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
             downloadImageView.setVisibility(View.VISIBLE);
             adCircleProgress.setVisibility(View.GONE);
         } else {
-            message.setVideoLocalLocation(result);
+            if (result.contains("/FrenzApp/Media/Videos/")){
+                message.setVideoLocalLocation(result);
+            }else if (result.contains("/FrenzApp/Media/Audios/")){
+                message.setAudioLocalLocation(result);
+            }else if (result.contains("/FrenzApp/Media/Images/")){
+                message.setImageLocalLocation(result);
+            }
             updater();
             Toast.makeText(context, "File downloaded to : " + result, Toast.LENGTH_SHORT).show();
         }

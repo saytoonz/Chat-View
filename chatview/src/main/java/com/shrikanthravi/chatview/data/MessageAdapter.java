@@ -2,8 +2,6 @@ package com.shrikanthravi.chatview.data;
 
 
 import android.app.Activity;
-import android.app.DownloadManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,8 +17,6 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.adprogressbarlib.AdCircleProgress;
 import com.bumptech.glide.Glide;
@@ -52,11 +47,6 @@ import com.silencedut.expandablelayout.ExpandableLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,9 +83,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private int timeTextColor = android.R.color.tab_indicator_text;
     private int senderNameTextColor = android.R.color.tab_indicator_text;
     private float textSize = 20;
-
-
-
 
 
     public MessageAdapter(List<Message> verticalList, Context context) {
@@ -785,6 +772,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public CardView leftBubbleIconCV;
         public SeekBar audioSeekbar;
         public PlayPauseView playPauseView;
+        public AdCircleProgress adCircleProgressAudioLV;
         public Message message;
         public android.os.Handler handler;
 
@@ -800,6 +788,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             leftBubbleIconIV = view.findViewById(R.id.leftBubbleIconIV);
             leftBubbleIconCV = view.findViewById(R.id.leftBubbleIconCV);
             downloadLeftAudio = view.findViewById(R.id.downloadLeftAudio);
+            adCircleProgressAudioLV = view.findViewById(R.id.left_audio_pgb_progress);
 
             setBackgroundColor(leftBubbleLayoutColor);
             setSeekBarLineColor(leftBubbleTextColor);
@@ -809,6 +798,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             showSenderName(showSenderName);
             showLeftBubbleIcon(showLeftBubbleIcon);
             handler = new android.os.Handler();
+
+
             audioSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -817,14 +808,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                 @Override
                 public void onStartTrackingTouch(SeekBar seekBar) {
-                    if (playingPosition == message.getAudioUri().toString()) {
+                    if (playingPosition == message.getAudioLocalLocation()) {
                         mediaPlayer.seekTo(seekBar.getProgress());
                     }
                 }
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    if (playingPosition == message.getAudioUri().toString()) {
+                    if (playingPosition == message.getAudioLocalLocation()) {
                         mediaPlayer.seekTo(seekBar.getProgress());
                     }
                 }
@@ -833,28 +824,45 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void run() {
                     if (message != null) {
-                        if (playingPosition == message.getAudioUri().toString()) {
-                            if (mediaPlayer != null) {
 
-                                if (mediaPlayer.isPlaying()) {
 
-                                    audioSeekbar.setProgress(mediaPlayer.getCurrentPosition());
-                                    if (playPauseView.isPlay()) {
-                                        playPauseView.change(false);
+
+                            if (playingPosition == message.getAudioLocalLocation()) {
+
+
+
+                                    playPauseView.setVisibility(View.VISIBLE);
+                                    downloadLeftAudio.setVisibility(View.GONE);
+                                    adCircleProgressAudioLV.setVisibility(View.GONE);
+                                    downloadLeftAudio.setOnClickListener(null);
+                                    adCircleProgressAudioLV.setOnClickListener(null);
+
+                                    if (mediaPlayer != null) {
+
+                                        if (mediaPlayer.isPlaying()) {
+
+                                            audioSeekbar.setProgress(mediaPlayer.getCurrentPosition());
+                                            if (playPauseView.isPlay()) {
+                                                playPauseView.change(false);
+                                            }
+                                        } else {
+                                            playPauseView.change(true);
+                                        }
+                                    } else {
+                                        playPauseView.change(true);
                                     }
-                                } else {
-                                    playPauseView.change(true);
-                                }
+
+
+
+
                             } else {
+
+                                audioSeekbar.setProgress(0);
+                                playPauseView.change(true);
                                 playPauseView.change(true);
                             }
 
-                        } else {
 
-                            audioSeekbar.setProgress(0);
-                            playPauseView.change(true);
-                            playPauseView.change(true);
-                        }
                     }
                     handler.postDelayed(this, 1000);
                 }
@@ -862,11 +870,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             playPauseView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-
                     if (mediaPlayer != null && mediaPlayer.isPlaying()) {
 
-                        if (playingPosition == message.getAudioUri().toString()) {
+                        if (playingPosition == message.getAudioLocalLocation()) {
                             mediaPlayer.stop();
                             mediaPlayer.reset();
                             mediaPlayer.release();
@@ -878,13 +884,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             mediaPlayer.reset();
                             mediaPlayer.release();
                             mediaPlayer = null;
-                            mediaPlayer = MediaPlayer.create(v.getContext(), message.getAudioUri());
+                            mediaPlayer = MediaPlayer.create(v.getContext(), Uri.parse(message.getAudioLocalLocation()));
                             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                 @Override
                                 public void onPrepared(MediaPlayer mediaPlayer) {
 
                                     mediaPlayer.start();
-                                    playingPosition = message.getAudioUri().toString();
+                                    playingPosition = message.getAudioLocalLocation();
                                     audioSeekbar.setMax(mediaPlayer.getDuration());
                                     playPauseView.change(false);
                                 }
@@ -893,20 +899,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         }
                     } else {
 
-                        mediaPlayer = MediaPlayer.create(v.getContext(), message.getAudioUri());
+                        mediaPlayer = MediaPlayer.create(v.getContext(), Uri.parse(message.getAudioLocalLocation()));
                         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                             @Override
                             public void onPrepared(MediaPlayer mediaPlayer) {
 
                                 mediaPlayer.start();
-                                playingPosition = message.getAudioUri().toString();
+                                playingPosition = message.getAudioLocalLocation();
                                 audioSeekbar.setMax(mediaPlayer.getDuration());
                                 playPauseView.change(false);
                             }
                         });
                     }
-
-
                 }
             });
 
@@ -915,9 +919,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-
                     int pos = getLayoutPosition();
-
                     return true;
                 }
             });
@@ -1215,6 +1217,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             holder1.senderNameTV.setText(message.getUserName());
         } else {
+
+
             if (holder instanceof RightTextViewHolder) {
                 final RightTextViewHolder holder1 = (RightTextViewHolder) holder;
                 holder1.rightTV.setText(message.getBody());
@@ -1224,6 +1228,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
                 holder1.senderNameTV.setText(message.getUserName());
             } else {
+
+
                 if (holder instanceof LeftImageViewHolder) {
                     final LeftImageViewHolder holder1 = (LeftImageViewHolder) holder;
 
@@ -1276,6 +1282,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         }
                     });
                 } else {
+
+
                     if (holder instanceof RightImageViewHolder) {
                         final RightImageViewHolder holder1 = (RightImageViewHolder) holder;
 
@@ -1328,6 +1336,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         holder1.rightTimeTV.setText(message.getTime());
 
                     } else {
+
+
                         if (holder instanceof LeftImagesViewHolder) {
                             final LeftImagesViewHolder holder1 = (LeftImagesViewHolder) holder;
 
@@ -1364,6 +1374,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             });
                         } else {
 
+
                             if (holder instanceof RightImagesViewHolder) {
                                 final RightImagesViewHolder holder1 = (RightImagesViewHolder) holder;
 
@@ -1399,10 +1410,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 });
                             } else {
 
+
                                 if (holder instanceof LeftTypingViewHolder) {
                                     //Do nothing for now... just Inflate
                                 } else {
+
                                     if (holder instanceof LeftVideoViewHolder) {
+
                                         final LeftVideoViewHolder holder1 = (LeftVideoViewHolder) holder;
 
                                         if (message.getUserIcon() != null) {
@@ -1412,23 +1426,32 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                         holder1.leftTimeTV.setText(message.getTime());
 
                                         if (TextUtils.isEmpty(message.getVideoLocalLocation())) {
+
                                             holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
                                             holder1.adCircleProgressLV.setVisibility(View.GONE);
                                             holder1.downloadLeftVideo.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    final String localDir =  "/FrenzApp/Videos/";
-                                                    final String localfileName = System.currentTimeMillis() + ".mp4";
+                                                    final String localDir = "/FrenzApp/Media/Videos/";
+                                                    final String localFileName = System.currentTimeMillis() + ".mp4";
 
                                                     final DownloadTask downloadTask =
                                                             new DownloadTask(context,
                                                                     holder1.adCircleProgressLV,
                                                                     holder1.downloadLeftVideo,
                                                                     message);
+                                                    holder1.adCircleProgressLV.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            downloadTask.cancel(true);
+                                                            holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
+                                                            holder1.adCircleProgressLV.setVisibility(View.GONE);
+                                                        }
+                                                    });
                                                     downloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
                                                             "kering-heat-5334.appspot.com" +
                                                             "/o/demo1.mp4?alt=media&token=f6d" +
-                                                            "82bb0-f61f-45bc-ab13-16970c7432c4", localDir, localfileName);
+                                                            "82bb0-f61f-45bc-ab13-16970c7432c4", localDir, localFileName);
                                                 }
                                             });
 
@@ -1449,36 +1472,103 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                     .into(imageView);
 
                                         } else {
-                                            holder1.adCircleProgressLV.setVisibility(View.GONE);
-                                            holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
-                                            holder1.downloadLeftVideo.setImageResource(R.drawable.video_icon);
-                                            final VideoPlayer videoPlayer = new VideoPlayer(context);
-                                            RelativeLayout.LayoutParams params =
-                                                    new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                                                            RelativeLayout.LayoutParams.MATCH_PARENT);
-                                            videoPlayer.setLayoutParams(params);
-                                            videoPlayer.setScaleType(VideoPlayer.ScaleType.CENTER_CROP);
-                                            holder1.videoLL.addView(videoPlayer);
-//                                            videoPlayer.loadVideo(message.getVideoUri().toString(), message);
-                                            videoPlayer.loadVideo(message.getVideoLocalLocation(), message);
-                                            videoPlayer.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                                                        mediaPlayer.pause();
+
+                                            if (!(new File(message.getVideoLocalLocation()).exists())) {
+
+                                                holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
+                                                holder1.adCircleProgressLV.setVisibility(View.GONE);
+                                                holder1.downloadLeftVideo.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        final String localDir = "/FrenzApp/Media/Videos/";
+                                                        final String localFileName = System.currentTimeMillis() + ".mp4";
+
+                                                        final DownloadTask downloadTask =
+                                                                new DownloadTask(context,
+                                                                        holder1.adCircleProgressLV,
+                                                                        holder1.downloadLeftVideo,
+                                                                        message);
+                                                        holder1.adCircleProgressLV.setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
+                                                                holder1.adCircleProgressLV.setVisibility(View.GONE);
+                                                                downloadTask.cancel(true);
+                                                            }
+                                                        });
+                                                        downloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
+                                                                "kering-heat-5334.appspot.com" +
+                                                                "/o/demo1.mp4?alt=media&token=f6d" +
+                                                                "82bb0-f61f-45bc-ab13-16970c7432c4", localDir, localFileName);
                                                     }
-                                                    videoPlayer.setTransitionName("videoFF");
-                                                    Intent intent = new Intent(context, VideoFFActivity.class);
-                                                    intent.putExtra("videoURI", message.getVideoLocalLocation());
-                                                    ActivityOptionsCompat optionsCompat =
-                                                            ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,
-                                                                    videoPlayer, videoPlayer.getTransitionName());
-                                                    context.startActivity(intent, optionsCompat.toBundle());
-                                                }
-                                            });
+                                                });
+
+                                                final ImageView imageView = new ImageView(context);
+                                                RelativeLayout.LayoutParams params =
+                                                        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                                                RelativeLayout.LayoutParams.MATCH_PARENT);
+                                                imageView.setLayoutParams(params);
+                                                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                                holder1.videoLL.addView(imageView);
+
+                                                Glide.with(context)
+                                                        .load("https://firebasestorage.googleapis.com/v0/b/flic" +
+                                                                "kering-heat-5334.appspot.com" +
+                                                                "/o/demo1.mp4?alt=media&token=f6d" +
+                                                                "82bb0-f61f-45bc-ab13-16970c7432c4")
+                                                        .apply(new RequestOptions().placeholder(R.drawable.boy))
+                                                        .into(imageView);
+                                            } else {
+                                                holder1.adCircleProgressLV.setVisibility(View.GONE);
+                                                holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
+                                                holder1.downloadLeftVideo.setImageResource(R.drawable.video_icon);
+                                                final VideoPlayer videoPlayer = new VideoPlayer(context);
+                                                RelativeLayout.LayoutParams params =
+                                                        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                                                RelativeLayout.LayoutParams.MATCH_PARENT);
+                                                videoPlayer.setLayoutParams(params);
+                                                videoPlayer.setScaleType(VideoPlayer.ScaleType.CENTER_CROP);
+                                                holder1.videoLL.addView(videoPlayer);
+
+                                                videoPlayer.loadVideo(message.getVideoLocalLocation(), message);
+                                                holder1.downloadLeftVideo.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                                                            mediaPlayer.pause();
+                                                        }
+                                                        videoPlayer.setTransitionName("videoFF");
+                                                        Intent intent = new Intent(context, VideoFFActivity.class);
+                                                        intent.putExtra("videoURI", message.getVideoLocalLocation());
+                                                        ActivityOptionsCompat optionsCompat =
+                                                                ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,
+                                                                        videoPlayer, videoPlayer.getTransitionName());
+                                                        context.startActivity(intent, optionsCompat.toBundle());
+                                                    }
+                                                });
+                                                videoPlayer.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                                                            mediaPlayer.pause();
+                                                        }
+                                                        videoPlayer.setTransitionName("videoFF");
+                                                        Intent intent = new Intent(context, VideoFFActivity.class);
+                                                        intent.putExtra("videoURI", message.getVideoLocalLocation());
+                                                        ActivityOptionsCompat optionsCompat =
+                                                                ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,
+                                                                        videoPlayer, videoPlayer.getTransitionName());
+                                                        context.startActivity(intent, optionsCompat.toBundle());
+                                                    }
+                                                });
+                                            }
+
                                         }
 
+
                                     } else {
+
+
                                         if (holder instanceof RightVideoViewHolder) {
                                             final RightVideoViewHolder holder1 = (RightVideoViewHolder) holder;
 
@@ -1486,22 +1576,31 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                 Picasso.with(context).load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
                                             }
                                             holder1.senderNameTV.setText(message.getUserName());
-                                            holder1.leftTimeTV.setText(message.getTime());
+                                            holder1.rightTimeTV.setText(message.getTime());
 
                                             if (TextUtils.isEmpty(message.getVideoLocalLocation())) {
-                                                holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
-                                                holder1.adCircleProgressLV.setVisibility(View.GONE);
-                                                holder1.downloadLeftVideo.setOnClickListener(new View.OnClickListener() {
+
+                                                holder1.downloadRightVideo.setVisibility(View.VISIBLE);
+                                                holder1.adCircleProgressRV.setVisibility(View.GONE);
+                                                holder1.downloadRightVideo.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View v) {
-                                                        final String localDir =  "/FrenzApp/Videos/";
+                                                        final String localDir = "/FrenzApp/Media/Videos/Sent/";
                                                         final String localfileName = System.currentTimeMillis() + ".mp4";
 
                                                         final DownloadTask downloadTask =
                                                                 new DownloadTask(context,
-                                                                        holder1.adCircleProgressLV,
-                                                                        holder1.downloadLeftVideo,
+                                                                        holder1.adCircleProgressRV,
+                                                                        holder1.downloadRightVideo,
                                                                         message);
+                                                        holder1.adCircleProgressRV.setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                holder1.downloadRightVideo.setVisibility(View.VISIBLE);
+                                                                holder1.adCircleProgressRV.setVisibility(View.GONE);
+                                                                downloadTask.cancel(true);
+                                                            }
+                                                        });
                                                         downloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
                                                                 "kering-heat-5334.appspot.com" +
                                                                 "/o/demo1.mp4?alt=media&token=f6d" +
@@ -1526,91 +1625,172 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                         .into(imageView);
 
                                             } else {
-                                                holder1.adCircleProgressLV.setVisibility(View.GONE);
-                                                holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
-                                                holder1.downloadLeftVideo.setImageResource(R.drawable.video_icon);
-                                                final VideoPlayer videoPlayer = new VideoPlayer(context);
-                                                RelativeLayout.LayoutParams params =
-                                                        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                                                                RelativeLayout.LayoutParams.MATCH_PARENT);
-                                                videoPlayer.setLayoutParams(params);
-                                                videoPlayer.setScaleType(VideoPlayer.ScaleType.CENTER_CROP);
-                                                holder1.videoLL.addView(videoPlayer);
-//                                            videoPlayer.loadVideo(message.getVideoUri().toString(), message);
-                                                videoPlayer.loadVideo(message.getVideoLocalLocation(), message);
-                                                videoPlayer.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View view) {
-                                                        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                                                            mediaPlayer.pause();
+                                                if (!(new File(message.getVideoLocalLocation()).exists())) {
+                                                    holder1.downloadRightVideo.setVisibility(View.VISIBLE);
+                                                    holder1.adCircleProgressRV.setVisibility(View.GONE);
+                                                    holder1.downloadRightVideo.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            final String localDir = "/FrenzApp/Media/Videos/Sent/";
+                                                            final String localfileName = System.currentTimeMillis() + ".mp4";
+
+                                                            final DownloadTask downloadTask =
+                                                                    new DownloadTask(context,
+                                                                            holder1.adCircleProgressRV,
+                                                                            holder1.downloadRightVideo,
+                                                                            message);
+                                                            holder1.adCircleProgressRV.setOnClickListener(new View.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(View v) {
+                                                                    holder1.downloadRightVideo.setVisibility(View.VISIBLE);
+                                                                    holder1.adCircleProgressRV.setVisibility(View.GONE);
+                                                                    downloadTask.cancel(true);
+                                                                }
+                                                            });
+                                                            downloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
+                                                                    "kering-heat-5334.appspot.com" +
+                                                                    "/o/demo1.mp4?alt=media&token=f6d" +
+                                                                    "82bb0-f61f-45bc-ab13-16970c7432c4", localDir, localfileName);
                                                         }
-                                                        videoPlayer.setTransitionName("videoFF");
-                                                        Intent intent = new Intent(context, VideoFFActivity.class);
-                                                        intent.putExtra("videoURI", message.getVideoLocalLocation());
-                                                        ActivityOptionsCompat optionsCompat =
-                                                                ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,
-                                                                        videoPlayer, videoPlayer.getTransitionName());
-                                                        context.startActivity(intent, optionsCompat.toBundle());
-                                                    }
-                                                });
+                                                    });
+
+                                                    final ImageView imageView = new ImageView(context);
+                                                    RelativeLayout.LayoutParams params =
+                                                            new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                                                    RelativeLayout.LayoutParams.MATCH_PARENT);
+                                                    imageView.setLayoutParams(params);
+                                                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                                    holder1.videoLL.addView(imageView);
+
+                                                    Glide.with(context)
+                                                            .load("https://firebasestorage.googleapis.com/v0/b/flic" +
+                                                                    "kering-heat-5334.appspot.com" +
+                                                                    "/o/demo1.mp4?alt=media&token=f6d" +
+                                                                    "82bb0-f61f-45bc-ab13-16970c7432c4")
+                                                            .apply(new RequestOptions().placeholder(R.drawable.boy))
+                                                            .into(imageView);
+
+                                                } else {
+                                                    holder1.adCircleProgressRV.setVisibility(View.GONE);
+                                                    holder1.downloadRightVideo.setVisibility(View.VISIBLE);
+                                                    holder1.downloadRightVideo.setImageResource(R.drawable.video_icon);
+                                                    final VideoPlayer videoPlayer = new VideoPlayer(context);
+                                                    RelativeLayout.LayoutParams params =
+                                                            new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                                                    RelativeLayout.LayoutParams.MATCH_PARENT);
+                                                    videoPlayer.setLayoutParams(params);
+                                                    videoPlayer.setScaleType(VideoPlayer.ScaleType.CENTER_CROP);
+                                                    holder1.videoLL.addView(videoPlayer);
+
+                                                    videoPlayer.loadVideo(message.getVideoLocalLocation(), message);
+                                                    holder1.downloadRightVideo.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                                                                mediaPlayer.pause();
+                                                            }
+                                                            videoPlayer.setTransitionName("videoFF");
+                                                            Intent intent = new Intent(context, VideoFFActivity.class);
+                                                            intent.putExtra("videoURI", message.getVideoLocalLocation());
+                                                            ActivityOptionsCompat optionsCompat =
+                                                                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,
+                                                                            videoPlayer, videoPlayer.getTransitionName());
+                                                            context.startActivity(intent, optionsCompat.toBundle());
+                                                        }
+                                                    });
+                                                    videoPlayer.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                                                                mediaPlayer.pause();
+                                                            }
+                                                            videoPlayer.setTransitionName("videoFF");
+                                                            Intent intent = new Intent(context, VideoFFActivity.class);
+                                                            intent.putExtra("videoURI", message.getVideoLocalLocation());
+                                                            ActivityOptionsCompat optionsCompat =
+                                                                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,
+                                                                            videoPlayer, videoPlayer.getTransitionName());
+                                                            context.startActivity(intent, optionsCompat.toBundle());
+                                                        }
+                                                    });
+                                                }
+
                                             }
 
-                                            final VideoPlayer videoPlayer = new VideoPlayer(context);
-                                            RelativeLayout.LayoutParams params =
-                                                    new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                                                            RelativeLayout.LayoutParams.MATCH_PARENT);
-                                            videoPlayer.setScaleType(VideoPlayer.ScaleType.CENTER_CROP);
-                                            videoPlayer.setLayoutParams(params);
-                                            holder1.videoLL.addView(videoPlayer);
-                                            videoPlayer.loadVideo(message.getVideoUri().toString(), message);
 
-
-
-                                            videoPlayer.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                                                        mediaPlayer.pause();
-                                                    }
-                                                    videoPlayer.setTransitionName("videoFF");
-                                                    Intent intent = new Intent(context, VideoFFActivity.class);
-                                                    intent.putExtra("videoURI", message.getVideoUri().toString());
-                                                    ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, videoPlayer, videoPlayer.getTransitionName());
-                                                    context.startActivity(intent, optionsCompat.toBundle());
-                                                }
-                                            });
-                                            holder1.senderNameTV.setText(message.getUserName());
-
-                                            holder1.rightTimeTV.setText(message.getTime());
-
-
-                                            holder1.downloadRightVideo.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    Toast.makeText(context, "Right Video View Holder", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
                                         } else {
+
+
                                             if (holder instanceof LeftAudioViewHolder) {
                                                 final LeftAudioViewHolder holder1 = (LeftAudioViewHolder) holder;
 
                                                 holder1.leftTimeTV.setText(message.getTime());
-
                                                 if (message.getUserIcon() != null) {
                                                     Picasso.with(context).load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
                                                 }
                                                 holder1.senderNameTV.setText(message.getUserName());
 
-                                                holder1.setMessage(message);
+                                                if (TextUtils.isEmpty(message.getAudioLocalLocation())) {
+                                                    holder1.playPauseView.setVisibility(View.GONE);
+                                                    holder1.downloadLeftAudio.setVisibility(View.VISIBLE);
+                                                    holder1.adCircleProgressAudioLV.setVisibility(View.GONE);
+                                                    holder1.downloadLeftAudio.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            final String localDir = "/FrenzApp/Media/Audios/";
+                                                            final String localfileName = System.currentTimeMillis() + ".mp3";
 
-                                                holder1.downloadLeftAudio.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        Toast.makeText(context, "Left Audio View Holder", Toast.LENGTH_SHORT).show();
+                                                            final DownloadTask downloadTask =
+                                                                    new DownloadTask(context,
+                                                                            holder1.adCircleProgressAudioLV,
+                                                                            holder1.downloadLeftAudio,
+                                                                            message);
+                                                            holder1.adCircleProgressAudioLV.setOnClickListener(new View.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(View v) {
+                                                                    holder1.downloadLeftAudio.setVisibility(View.VISIBLE);
+                                                                    holder1.adCircleProgressAudioLV.setVisibility(View.GONE);
+                                                                    downloadTask.cancel(true);
+                                                                }
+                                                            });
+                                                            downloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
+                                                        }
+                                                    });
+                                                } else {
+                                                    if (!(new File(message.getAudioLocalLocation()).exists())) {
+                                                        holder1.playPauseView.setVisibility(View.GONE);
+                                                        holder1.downloadLeftAudio.setVisibility(View.VISIBLE);
+                                                        holder1.adCircleProgressAudioLV.setVisibility(View.GONE);
+                                                        holder1.downloadLeftAudio.setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                final String localDir = "/FrenzApp/Media/Audios/";
+                                                                final String localfileName = System.currentTimeMillis() + ".mp3";
+
+                                                                final DownloadTask downloadTask =
+                                                                        new DownloadTask(context,
+                                                                                holder1.adCircleProgressAudioLV,
+                                                                                holder1.downloadLeftAudio,
+                                                                                message);
+                                                                holder1.adCircleProgressAudioLV.setOnClickListener(new View.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(View v) {
+                                                                        holder1.downloadLeftAudio.setVisibility(View.VISIBLE);
+                                                                        holder1.adCircleProgressAudioLV.setVisibility(View.GONE);
+                                                                        downloadTask.cancel(true);
+                                                                    }
+                                                                });
+                                                                downloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
+                                                            }
+                                                        });
+                                                    } else {
+                                                        holder1.setMessage(message);
                                                     }
-                                                });
+                                                }
 
                                             } else {
+
+
                                                 final RightAudioViewHolder holder1 = (RightAudioViewHolder) holder;
 
                                                 holder1.rightTimeTV.setText(message.getTime());
@@ -1622,13 +1802,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                 holder1.senderNameTV.setText(message.getUserName());
 
                                                 holder1.setMessage(message);
-
-                                                holder1.downloadRightAudio.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        Toast.makeText(context, "Right Audio View Holder", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
 
                                             }
                                         }
