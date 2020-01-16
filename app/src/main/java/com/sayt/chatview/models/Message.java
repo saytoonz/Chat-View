@@ -1,4 +1,4 @@
-package com.sayt.chatview.data;
+package com.sayt.chatview.models;
 
 
 import android.net.Uri;

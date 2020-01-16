@@ -1,4 +1,4 @@
-package com.sayt.chatview;
+package com.sayt.chatview.ui.activities;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -10,11 +10,12 @@ import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.sayt.chatview.widget.ChatView;
-import com.sayt.chatview.data.Message;
+import com.sayt.chatview.R;
+import com.sayt.chatview.helpers.PicassoEngine;
+import com.sayt.chatview.ui.widget.ChatView;
+import com.sayt.chatview.models.Message;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.PicassoEngine;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.sayt.chatview.data.MessageAdapter.stopMediaPlayer;
+import static com.sayt.chatview.adapters.MessageAdapter.stopMediaPlayer;
 
 public class ChatViewTestActivity extends AppCompatActivity {
 
@@ -55,7 +56,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                     message.setMessageType(Message.MessageType.RightSimpleImage);
                     message.setTime(getTime());
                     message.setUserName("Groot");
-                    message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/groot"));
+                    message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                     chatView.addMessage(message);
 
                     switchbool=false;
@@ -66,7 +67,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                     message1.setMessageType(Message.MessageType.LeftSimpleMessage);
                     message1.setTime(getTime());
                     message1.setUserName("Hodor");
-                    message1.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/hodor"));
+                    message1.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                     chatView.addMessage(message1);
 
                     switchbool=true;
@@ -160,7 +161,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                             message.setTime(getTime());
                             message.setUserName("Groot");
                             message.setImageList(mSelected);
-                            message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/groot"));
+                            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                             chatView.addMessage(message);
                             switchbool=false;
                         } else {
@@ -172,7 +173,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                             message.setTime(getTime());
                             message.setUserName("Groot");
                             message.setImageList(mSelected);
-                            message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/groot"));
+                            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                             chatView.addMessage(message);
                             switchbool=false;
                         }
@@ -187,7 +188,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                             message.setTime(getTime());
                             message.setUserName("Hodor");
                             message.setImageList(mSelected);
-                            message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/hodor"));
+                            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                             chatView.addMessage(message);
                             switchbool=true;
                         } else {
@@ -199,7 +200,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                             message.setTime(getTime());
                             message.setUserName("Hodor");
                             message.setImageList(mSelected);
-                            message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/hodor"));
+                            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                             chatView.addMessage(message);
                             switchbool=true;
                         }
@@ -218,7 +219,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                         message.setTime(getTime());
                         message.setUserName("Groot");
                         message.setVideoUri(Uri.parse(getPathVideo(data.getData())));
-                        message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/groot"));
+                        message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                         chatView.addMessage(message);
                         switchbool = false;
                     } else {
@@ -228,7 +229,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                         message.setTime(getTime());
                         message.setUserName("Hodor");
                         message.setVideoUri(Uri.parse(getPathVideo(data.getData())));
-                        message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/hodor"));
+                        message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                         chatView.addMessage(message);
                         switchbool = true;
                     }
@@ -253,7 +254,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                         Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
                         mSelected.add(uri);
                         message.setImageList(mSelected);
-                        message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/groot"));
+                        message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                         chatView.addMessage(message);
                         switchbool = false;
                     } else {
@@ -268,7 +269,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                         Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
                         mSelected.add(uri);
                         message.setImageList(mSelected);
-                        message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/hodor"));
+                        message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                         chatView.addMessage(message);
                         switchbool = true;
                     }
@@ -283,7 +284,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                         message.setTime(getTime());
                         message.setUserName("Groot");
                         message.setAudioUri(Objects.requireNonNull(data.getData()));
-                        message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/groot"));
+                        message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                         chatView.addMessage(message);
                         switchbool = false;
                     } else {
@@ -293,7 +294,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                         message.setTime(getTime());
                         message.setUserName("Hodor");
                         message.setAudioUri(Objects.requireNonNull(data.getData()));
-                        message.setUserIcon(Uri.parse("android.resource://com.shrikanthravi.chatviewlibrary/drawable/hodor"));
+                        message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                         chatView.addMessage(message);
                         switchbool = true;
                     }

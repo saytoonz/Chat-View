@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:transitionName="videoFF"
     android:background="@android:color/black"
-    tools:context="com.sayt.chatview.activities.VideoFFActivity">
+    tools:context=".ui.activities.VideoFFActivity">
     <TextureView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

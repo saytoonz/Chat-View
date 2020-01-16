@@ -1,4 +1,4 @@
-package com.sayt.chatview.widget;
+package com.sayt.chatview.ui.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -19,8 +19,8 @@ import android.widget.RelativeLayout;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.github.zagum.expandicon.ExpandIconView;
 import com.sayt.chatview.R;
-import com.sayt.chatview.data.Message;
-import com.sayt.chatview.data.MessageAdapter;
+import com.sayt.chatview.models.Message;
+import com.sayt.chatview.adapters.MessageAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

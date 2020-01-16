@@ -1,4 +1,4 @@
-package com.sayt.chatview.activities;
+package com.sayt.chatview.ui.activities;
 
 import android.animation.ObjectAnimator;
 import android.graphics.Matrix;

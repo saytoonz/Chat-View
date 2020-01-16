@@ -3,14 +3,13 @@ package com.sayt.chatview.helpers;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.app.adprogressbarlib.AdCircleProgress;
-import com.sayt.chatview.data.Message;
+import com.sayt.chatview.models.Message;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,21 +20,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 
-import static com.sayt.chatview.widget.ChatView.updater;
+import static com.sayt.chatview.ui.widget.ChatView.updater;
 
-// usually, subclasses of AsyncTask are declared inside the activity class.
-// that way, you can easily modify the UI thread from here
-public class DownloadTask extends AsyncTask<String, Integer, String> {
+public class ChatDownloadTask extends AsyncTask<String, Integer, String> {
     private AdCircleProgress adCircleProgress;
     private ImageView downloadImageView;
     private Message message;
     private Context context;
-//    private PowerManager.WakeLock mWakeLock;
 
-    public DownloadTask(Context context,
-                        AdCircleProgress adCircleProgress,
-                        ImageView downloadImageView,
-                        Message message) {
+    public ChatDownloadTask(Context context,
+                            AdCircleProgress adCircleProgress,
+                            ImageView downloadImageView,
+                            Message message) {
         this.context = context;
         this.adCircleProgress = adCircleProgress;
         this.downloadImageView = downloadImageView;
@@ -46,13 +42,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        // take CPU lock to prevent CPU from going off if the user
-        // presses the power button during download
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-//        assert pm != null;
-//        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-//                getClass().getName());
-//        mWakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
+
         downloadImageView.setVisibility(View.GONE);
         adCircleProgress.setVisibility(View.VISIBLE);
     }
@@ -113,7 +103,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
                 output.write(data, 0, count);
             }
         } catch (Exception e) {
-            Log.e("DownloadTask", Objects.requireNonNull(e.getMessage()));
+            Log.e("ChatDownloadTask", Objects.requireNonNull(e.getMessage()));
             return null;
         } finally {
             try {

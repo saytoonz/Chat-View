@@ -1,4 +1,4 @@
-package com.sayt.chatview.data;
+package com.sayt.chatview.ui.views;
 
 import android.content.Context;
 import android.graphics.Matrix;
@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+
+import com.sayt.chatview.models.Message;
 
 import java.io.IOException;
 

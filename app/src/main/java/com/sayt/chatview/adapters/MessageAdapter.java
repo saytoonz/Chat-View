@@ -1,4 +1,4 @@
-package com.sayt.chatview.data;
+package com.sayt.chatview.adapters;
 
 
 import android.app.Activity;
@@ -31,18 +31,20 @@ import android.widget.TextView;
 import com.app.adprogressbarlib.AdCircleProgress;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.lopei.collageview.CollageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.DiskCacheUtils;
 import com.ohoussein.playpause.PlayPauseView;
 import com.sayt.chatview.R;
-import com.sayt.chatview.activities.ImageFFActivity;
-import com.sayt.chatview.activities.VideoFFActivity;
-import com.sayt.chatview.helpers.DownloadTask;
+import com.sayt.chatview.ui.activities.ImageFFActivity;
+import com.sayt.chatview.ui.activities.VideoFFActivity;
+import com.sayt.chatview.helpers.ChatDownloadTask;
+import com.sayt.chatview.models.Message;
 import com.sayt.chatview.utils.FontChanger;
 
+import com.sayt.chatview.ui.views.CollageView;
+import com.sayt.chatview.ui.views.VideoPlayer;
 import com.silencedut.expandablelayout.ExpandableLayout;
 import com.squareup.picasso.Picasso;
 
@@ -1419,20 +1421,20 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                     final String localDir = "/FrenzApp/Media/Videos/";
                                                     final String localFileName = System.currentTimeMillis() + ".mp4";
 
-                                                    final DownloadTask downloadTask =
-                                                            new DownloadTask(context,
+                                                    final ChatDownloadTask chatDownloadTask =
+                                                            new ChatDownloadTask(context,
                                                                     holder1.adCircleProgressLV,
                                                                     holder1.downloadLeftVideo,
                                                                     message);
                                                     holder1.adCircleProgressLV.setOnClickListener(new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View v) {
-                                                            downloadTask.cancel(true);
+                                                            chatDownloadTask.cancel(true);
                                                             holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
                                                             holder1.adCircleProgressLV.setVisibility(View.GONE);
                                                         }
                                                     });
-                                                    downloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
+                                                    chatDownloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
                                                             "kering-heat-5334.appspot.com" +
                                                             "/o/demo1.mp4?alt=media&token=f6d" +
                                                             "82bb0-f61f-45bc-ab13-16970c7432c4", localDir, localFileName);
@@ -1452,7 +1454,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                             "kering-heat-5334.appspot.com" +
                                                             "/o/demo1.mp4?alt=media&token=f6d" +
                                                             "82bb0-f61f-45bc-ab13-16970c7432c4")
-                                                    .apply(new RequestOptions().placeholder(R.drawable.boy))
+                                                    .apply(new RequestOptions().placeholder(R.drawable.video_clip))
                                                     .into(imageView);
 
                                         } else {
@@ -1467,8 +1469,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                         final String localDir = "/FrenzApp/Media/Videos/";
                                                         final String localFileName = System.currentTimeMillis() + ".mp4";
 
-                                                        final DownloadTask downloadTask =
-                                                                new DownloadTask(context,
+                                                        final ChatDownloadTask chatDownloadTask =
+                                                                new ChatDownloadTask(context,
                                                                         holder1.adCircleProgressLV,
                                                                         holder1.downloadLeftVideo,
                                                                         message);
@@ -1477,10 +1479,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                             public void onClick(View v) {
                                                                 holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
                                                                 holder1.adCircleProgressLV.setVisibility(View.GONE);
-                                                                downloadTask.cancel(true);
+                                                                chatDownloadTask.cancel(true);
                                                             }
                                                         });
-                                                        downloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
+                                                        chatDownloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
                                                                 "kering-heat-5334.appspot.com" +
                                                                 "/o/demo1.mp4?alt=media&token=f6d" +
                                                                 "82bb0-f61f-45bc-ab13-16970c7432c4", localDir, localFileName);
@@ -1500,7 +1502,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                 "kering-heat-5334.appspot.com" +
                                                                 "/o/demo1.mp4?alt=media&token=f6d" +
                                                                 "82bb0-f61f-45bc-ab13-16970c7432c4")
-                                                        .apply(new RequestOptions().placeholder(R.drawable.boy))
+                                                        .apply(new RequestOptions().placeholder(R.drawable.video_clip))
                                                         .into(imageView);
                                             } else {
                                                 holder1.adCircleProgressLV.setVisibility(View.GONE);
@@ -1572,8 +1574,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                         final String localDir = "/FrenzApp/Media/Videos/Sent/";
                                                         final String localfileName = System.currentTimeMillis() + ".mp4";
 
-                                                        final DownloadTask downloadTask =
-                                                                new DownloadTask(context,
+                                                        final ChatDownloadTask chatDownloadTask =
+                                                                new ChatDownloadTask(context,
                                                                         holder1.adCircleProgressRV,
                                                                         holder1.downloadRightVideo,
                                                                         message);
@@ -1582,10 +1584,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                             public void onClick(View v) {
                                                                 holder1.downloadRightVideo.setVisibility(View.VISIBLE);
                                                                 holder1.adCircleProgressRV.setVisibility(View.GONE);
-                                                                downloadTask.cancel(true);
+                                                                chatDownloadTask.cancel(true);
                                                             }
                                                         });
-                                                        downloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
+                                                        chatDownloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
                                                                 "kering-heat-5334.appspot.com" +
                                                                 "/o/demo1.mp4?alt=media&token=f6d" +
                                                                 "82bb0-f61f-45bc-ab13-16970c7432c4", localDir, localfileName);
@@ -1605,7 +1607,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                 "kering-heat-5334.appspot.com" +
                                                                 "/o/demo1.mp4?alt=media&token=f6d" +
                                                                 "82bb0-f61f-45bc-ab13-16970c7432c4")
-                                                        .apply(new RequestOptions().placeholder(R.drawable.boy))
+                                                        .apply(new RequestOptions().placeholder(R.drawable.video_clip))
                                                         .into(imageView);
 
                                             } else {
@@ -1618,8 +1620,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                             final String localDir = "/FrenzApp/Media/Videos/Sent/";
                                                             final String localfileName = System.currentTimeMillis() + ".mp4";
 
-                                                            final DownloadTask downloadTask =
-                                                                    new DownloadTask(context,
+                                                            final ChatDownloadTask chatDownloadTask =
+                                                                    new ChatDownloadTask(context,
                                                                             holder1.adCircleProgressRV,
                                                                             holder1.downloadRightVideo,
                                                                             message);
@@ -1628,10 +1630,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                 public void onClick(View v) {
                                                                     holder1.downloadRightVideo.setVisibility(View.VISIBLE);
                                                                     holder1.adCircleProgressRV.setVisibility(View.GONE);
-                                                                    downloadTask.cancel(true);
+                                                                    chatDownloadTask.cancel(true);
                                                                 }
                                                             });
-                                                            downloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
+                                                            chatDownloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
                                                                     "kering-heat-5334.appspot.com" +
                                                                     "/o/demo1.mp4?alt=media&token=f6d" +
                                                                     "82bb0-f61f-45bc-ab13-16970c7432c4", localDir, localfileName);
@@ -1651,7 +1653,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                     "kering-heat-5334.appspot.com" +
                                                                     "/o/demo1.mp4?alt=media&token=f6d" +
                                                                     "82bb0-f61f-45bc-ab13-16970c7432c4")
-                                                            .apply(new RequestOptions().placeholder(R.drawable.boy))
+                                                            .apply(new RequestOptions().placeholder(R.drawable.video_clip))
                                                             .into(imageView);
 
                                                 } else {
@@ -1724,8 +1726,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                             final String localDir = "/FrenzApp/Media/Audios/";
                                                             final String localfileName = System.currentTimeMillis() + ".mp3";
 
-                                                            final DownloadTask downloadTask =
-                                                                    new DownloadTask(context,
+                                                            final ChatDownloadTask chatDownloadTask =
+                                                                    new ChatDownloadTask(context,
                                                                             holder1.adCircleProgressAudioLV,
                                                                             holder1.downloadLeftAudio,
                                                                             message);
@@ -1734,10 +1736,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                 public void onClick(View v) {
                                                                     holder1.downloadLeftAudio.setVisibility(View.VISIBLE);
                                                                     holder1.adCircleProgressAudioLV.setVisibility(View.GONE);
-                                                                    downloadTask.cancel(true);
+                                                                    chatDownloadTask.cancel(true);
                                                                 }
                                                             });
-                                                            downloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
+                                                            chatDownloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
                                                         }
                                                     });
                                                 } else {
@@ -1751,8 +1753,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                 final String localDir = "/FrenzApp/Media/Audios/";
                                                                 final String localfileName = System.currentTimeMillis() + ".mp3";
 
-                                                                final DownloadTask downloadTask =
-                                                                        new DownloadTask(context,
+                                                                final ChatDownloadTask chatDownloadTask =
+                                                                        new ChatDownloadTask(context,
                                                                                 holder1.adCircleProgressAudioLV,
                                                                                 holder1.downloadLeftAudio,
                                                                                 message);
@@ -1761,10 +1763,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                     public void onClick(View v) {
                                                                         holder1.downloadLeftAudio.setVisibility(View.VISIBLE);
                                                                         holder1.adCircleProgressAudioLV.setVisibility(View.GONE);
-                                                                        downloadTask.cancel(true);
+                                                                        chatDownloadTask.cancel(true);
                                                                     }
                                                                 });
-                                                                downloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
+                                                                chatDownloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
                                                             }
                                                         });
                                                     } else {
@@ -1799,8 +1801,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                 final String localDir = "/FrenzApp/Media/Audios/Sent/";
                                                                 final String localfileName = System.currentTimeMillis() + ".mp3";
 
-                                                                final DownloadTask downloadTask =
-                                                                        new DownloadTask(context,
+                                                                final ChatDownloadTask chatDownloadTask =
+                                                                        new ChatDownloadTask(context,
                                                                                 holder1.adCircleProgressAudioRV,
                                                                                 holder1.downloadRightAudio,
                                                                                 message);
@@ -1809,10 +1811,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                     public void onClick(View v) {
                                                                         holder1.downloadRightAudio.setVisibility(View.VISIBLE);
                                                                         holder1.adCircleProgressAudioRV.setVisibility(View.GONE);
-                                                                        downloadTask.cancel(true);
+                                                                        chatDownloadTask.cancel(true);
                                                                     }
                                                                 });
-                                                                downloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
+                                                                chatDownloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
                                                             }
                                                         });
                                                     } else {
@@ -1826,8 +1828,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                     final String localDir = "/FrenzApp/Media/Audios/Sent/";
                                                                     final String localfileName = System.currentTimeMillis() + ".mp3";
 
-                                                                    final DownloadTask downloadTask =
-                                                                            new DownloadTask(context,
+                                                                    final ChatDownloadTask chatDownloadTask =
+                                                                            new ChatDownloadTask(context,
                                                                                     holder1.adCircleProgressAudioRV,
                                                                                     holder1.downloadRightAudio,
                                                                                     message);
@@ -1836,10 +1838,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                         public void onClick(View v) {
                                                                             holder1.downloadRightAudio.setVisibility(View.VISIBLE);
                                                                             holder1.adCircleProgressAudioRV.setVisibility(View.GONE);
-                                                                            downloadTask.cancel(true);
+                                                                            chatDownloadTask.cancel(true);
                                                                         }
                                                                     });
-                                                                    downloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
+                                                                    chatDownloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
                                                                 }
                                                             });
                                                         } else {

@@ -1,11 +1,10 @@
-package com.sayt.chatview.activities;
+package com.sayt.chatview.ui.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.TransitionInflater;
-import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.sayt.chatview.R;
@@ -37,15 +36,4 @@ public class ImageFFActivity extends AppCompatActivity {
         supportFinishAfterTransition();
     }
 
-    private void scheduleStartPostponedTransition(final View sharedElement) {
-        sharedElement.getViewTreeObserver().addOnPreDrawListener(
-                new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        sharedElement.getViewTreeObserver().removeOnPreDrawListener(this);
-                        startPostponedEnterTransition();
-                        return true;
-                    }
-                });
-    }
 }

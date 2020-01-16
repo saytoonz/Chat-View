@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
-    tools:context="com.sayt.chatview.ChatViewTestActivity">
+    tools:context="com.sayt.chatview.ui.activities.ChatViewTestActivity">
 
-    <com.sayt.chatview.widget.ChatView
+    <com.sayt.chatview.ui.widget.ChatView
         android:id="@+id/chatView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +18,7 @@
         app:showSenderLayout="true"
         app:showSenderName="true">
 
-    </com.sayt.chatview.widget.ChatView>
+    </com.sayt.chatview.ui.widget.ChatView>
 
 
 </RelativeLayout>

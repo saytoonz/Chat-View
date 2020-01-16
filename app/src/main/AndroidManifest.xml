@@ -23,11 +23,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name="com.sayt.chatview.activities.ImageFFActivity" />
+        <activity android:name=".ui.activities.ImageFFActivity" />
         <activity
-            android:name="com.sayt.chatview.activities.VideoFFActivity"
+            android:name=".ui.activities.VideoFFActivity"
             android:configChanges="orientation|screenSize" />
-        <activity android:name="com.sayt.chatview.ChatViewTestActivity"
+        <activity android:name="com.sayt.chatview.ui.activities.ChatViewTestActivity"
             android:hardwareAccelerated="true"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait">

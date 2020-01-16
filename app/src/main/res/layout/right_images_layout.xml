@@ -47,7 +47,7 @@
                         android:layout_margin="4dp"
                         app:cardCornerRadius="15dp"
                         android:id="@+id/rightIVCV">
-                        <com.lopei.collageview.CollageView
+                        <com.sayt.chatview.ui.views.CollageView
                             android:id="@+id/rightCollageView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
