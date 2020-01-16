@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.shrikanthravi.chatview">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:hardwareAccelerated="true"
+        android:largeHeap="true">
+        <activity android:name=".activities.ImageFFActivity" />
+        <activity
+            android:name=".activities.VideoFFActivity"
+            android:configChanges="orientation|screenSize"></activity>
+    </application>
+
+</manifest>
