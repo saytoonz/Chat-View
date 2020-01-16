@@ -1,4 +1,4 @@
-package com.shrikanthravi.chatviewlibrary.helpers;
+package com.sayt.chatview.helpers;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.app.adprogressbarlib.AdCircleProgress;
-import com.shrikanthravi.chatviewlibrary.data.Message;
+import com.sayt.chatview.data.Message;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 
-import static com.shrikanthravi.chatviewlibrary.widget.ChatView.updater;
+import static com.sayt.chatview.widget.ChatView.updater;
 
 // usually, subclasses of AsyncTask are declared inside the activity class.
 // that way, you can easily modify the UI thread from here

@@ -1,4 +1,4 @@
-package com.shrikanthravi.chatviewlibrary;
+package com.sayt.chatview;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -10,8 +10,8 @@ import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.shrikanthravi.chatviewlibrary.widget.ChatView;
-import com.shrikanthravi.chatviewlibrary.data.Message;
+import com.sayt.chatview.widget.ChatView;
+import com.sayt.chatview.data.Message;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.shrikanthravi.chatviewlibrary.data.MessageAdapter.stopMediaPlayer;
+import static com.sayt.chatview.data.MessageAdapter.stopMediaPlayer;
 
 public class ChatViewTestActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.shrikanthravi.chatviewlibrary.data;
+package com.sayt.chatview.data;
 
 
 import android.app.Activity;
@@ -37,11 +37,11 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.DiskCacheUtils;
 import com.ohoussein.playpause.PlayPauseView;
-import com.shrikanthravi.chatviewlibrary.R;
-import com.shrikanthravi.chatviewlibrary.activities.ImageFFActivity;
-import com.shrikanthravi.chatviewlibrary.activities.VideoFFActivity;
-import com.shrikanthravi.chatviewlibrary.helpers.DownloadTask;
-import com.shrikanthravi.chatviewlibrary.utils.FontChanger;
+import com.sayt.chatview.R;
+import com.sayt.chatview.activities.ImageFFActivity;
+import com.sayt.chatview.activities.VideoFFActivity;
+import com.sayt.chatview.helpers.DownloadTask;
+import com.sayt.chatview.utils.FontChanger;
 
 import com.silencedut.expandablelayout.ExpandableLayout;
 import com.squareup.picasso.Picasso;

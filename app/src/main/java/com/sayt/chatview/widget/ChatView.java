@@ -1,4 +1,4 @@
-package com.shrikanthravi.chatviewlibrary.widget;
+package com.sayt.chatview.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -18,9 +18,9 @@ import android.widget.RelativeLayout;
 
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.github.zagum.expandicon.ExpandIconView;
-import com.shrikanthravi.chatviewlibrary.R;
-import com.shrikanthravi.chatviewlibrary.data.Message;
-import com.shrikanthravi.chatviewlibrary.data.MessageAdapter;
+import com.sayt.chatview.R;
+import com.sayt.chatview.data.Message;
+import com.sayt.chatview.data.MessageAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

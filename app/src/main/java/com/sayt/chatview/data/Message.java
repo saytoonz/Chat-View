@@ -1,4 +1,4 @@
-package com.shrikanthravi.chatviewlibrary.data;
+package com.sayt.chatview.data;
 
 
 import android.net.Uri;

@@ -1,4 +1,4 @@
-package com.shrikanthravi.chatviewlibrary.activities;
+package com.sayt.chatview.activities;
 
 import android.animation.ObjectAnimator;
 import android.graphics.Matrix;
@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import com.marcinmoskala.arcseekbar.ArcSeekBar;
 import com.marcinmoskala.arcseekbar.ProgressListener;
 import com.ohoussein.playpause.PlayPauseView;
-import com.shrikanthravi.chatviewlibrary.R;
+import com.sayt.chatview.R;
 
 
 import java.io.IOException;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.shrikanthravi.chatviewlibrary">
+    package="com.sayt.chatview">
 
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
@@ -12,7 +12,7 @@
 
 
     <application
-        android:name=".App"
+        android:name="com.sayt.chatview.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -23,11 +23,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name="com.shrikanthravi.chatviewlibrary.activities.ImageFFActivity" />
+        <activity android:name="com.sayt.chatview.activities.ImageFFActivity" />
         <activity
-            android:name="com.shrikanthravi.chatviewlibrary.activities.VideoFFActivity"
+            android:name="com.sayt.chatview.activities.VideoFFActivity"
             android:configChanges="orientation|screenSize" />
-        <activity android:name=".ChatViewTestActivity"
+        <activity android:name="com.sayt.chatview.ChatViewTestActivity"
             android:hardwareAccelerated="true"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait">

@@ -1,4 +1,4 @@
-package com.shrikanthravi.chatviewlibrary;
+package com.sayt.chatview;
 
 import android.content.Context;
 import androidx.test.platform.app.InstrumentationRegistry;

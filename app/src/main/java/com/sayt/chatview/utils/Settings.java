@@ -1,4 +1,4 @@
-package com.shrikanthravi.chatviewlibrary.utils;
+package com.sayt.chatview.utils;
 
 public class Settings {
 

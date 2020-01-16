@@ -1,4 +1,4 @@
-package com.shrikanthravi.chatviewlibrary;
+package com.sayt.chatview;
 
 import android.graphics.Typeface;
 import android.view.View;

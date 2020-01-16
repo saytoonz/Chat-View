@@ -1,4 +1,4 @@
-package com.shrikanthravi.chatviewlibrary.activities;
+package com.sayt.chatview.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 
 import com.github.chrisbanes.photoview.PhotoView;
-import com.shrikanthravi.chatviewlibrary.R;
+import com.sayt.chatview.R;
 import com.squareup.picasso.Picasso;
 
 public class ImageFFActivity extends AppCompatActivity {
