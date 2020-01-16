@@ -73,14 +73,30 @@
                     app:play_bg="@color/transparent_black_percent_50"
                     android:id="@+id/play_pause_view"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/profile_icon"/>
+                    android:src="@drawable/profile_icon"
+                    android:visibility="gone"/>
+
+                <com.app.adprogressbarlib.AdCircleProgress
+                    android:id="@+id/right_audio_pgb_progress"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_gravity="center"
+                    android:backgroundTintMode="add"
+                    android:visibility="gone"
+                    app:adpgb_finished_color="@color/colorAccent"
+                    app:adpgb_finished_stroke_width="5dp"
+                    app:adpgb_inner_drawable="@drawable/ic_close_icon"
+                    app:adpgb_show_text="false"
+                    app:adpgb_unfinished_color="@android:color/white"
+                    app:adpgb_unfinished_stroke_width="5dp" />
 
                 <ImageView
                     android:layout_width="34dp"
                     android:layout_height="34dp"
                     android:id="@+id/downloadRightAudio"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/icons8_download_200"/>
+                    android:src="@drawable/icons8_download_200"
+                    android:visibility="gone"/>
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"

@@ -826,41 +826,28 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (message != null) {
 
 
+                        if (playingPosition == message.getAudioLocalLocation()) {
+                            if (mediaPlayer != null) {
 
-                            if (playingPosition == message.getAudioLocalLocation()) {
+                                if (mediaPlayer.isPlaying()) {
 
-
-
-                                    playPauseView.setVisibility(View.VISIBLE);
-                                    downloadLeftAudio.setVisibility(View.GONE);
-                                    adCircleProgressAudioLV.setVisibility(View.GONE);
-                                    downloadLeftAudio.setOnClickListener(null);
-                                    adCircleProgressAudioLV.setOnClickListener(null);
-
-                                    if (mediaPlayer != null) {
-
-                                        if (mediaPlayer.isPlaying()) {
-
-                                            audioSeekbar.setProgress(mediaPlayer.getCurrentPosition());
-                                            if (playPauseView.isPlay()) {
-                                                playPauseView.change(false);
-                                            }
-                                        } else {
-                                            playPauseView.change(true);
-                                        }
-                                    } else {
-                                        playPauseView.change(true);
+                                    audioSeekbar.setProgress(mediaPlayer.getCurrentPosition());
+                                    if (playPauseView.isPlay()) {
+                                        playPauseView.change(false);
                                     }
-
-
-
-
+                                } else {
+                                    playPauseView.change(true);
+                                }
                             } else {
-
-                                audioSeekbar.setProgress(0);
-                                playPauseView.change(true);
                                 playPauseView.change(true);
                             }
+
+                        } else {
+
+                            audioSeekbar.setProgress(0);
+                            playPauseView.change(true);
+                            playPauseView.change(true);
+                        }
 
 
                     }
@@ -986,6 +973,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public Message message;
         public SeekBar audioSeekbar;
         public PlayPauseView playPauseView;
+        public AdCircleProgress adCircleProgressAudioRV;
         public android.os.Handler handler;
 
         public RightAudioViewHolder(View view) {
@@ -1000,6 +988,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             rightBubbleIconCV = view.findViewById(R.id.rightBubbleIconCV);
             rightBubbleIconIV = view.findViewById(R.id.rightBubbleIconIV);
             downloadRightAudio = view.findViewById(R.id.downloadRightAudio);
+            adCircleProgressAudioRV = view.findViewById(R.id.right_audio_pgb_progress);
 
             setBackgroundColor(rightBubbleLayoutColor);
             setSeekBarLineColor(rightBubbleTextColor);
@@ -1018,7 +1007,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void onStartTrackingTouch(SeekBar seekBar) {
                     if (mediaPlayer != null) {
-                        if (playingPosition == message.getAudioUri().toString()) {
+                        if (playingPosition == message.getAudioLocalLocation()) {
                             mediaPlayer.seekTo(seekBar.getProgress());
                         }
                     }
@@ -1027,7 +1016,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     if (mediaPlayer != null) {
-                        if (playingPosition == message.getAudioUri().toString()) {
+                        if (playingPosition == message.getAudioLocalLocation()) {
                             mediaPlayer.seekTo(seekBar.getProgress());
                         }
                     }
@@ -1037,7 +1026,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void run() {
                     if (message != null) {
-                        if (playingPosition == message.getAudioUri().toString()) {
+                        if (playingPosition == message.getAudioLocalLocation()) {
                             if (mediaPlayer != null) {
                                 if (mediaPlayer.isPlaying()) {
 
@@ -1071,7 +1060,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                     if (mediaPlayer != null && mediaPlayer.isPlaying()) {
 
-                        if (playingPosition == message.getAudioUri().toString()) {
+                        if (playingPosition == message.getAudioLocalLocation()) {
                             mediaPlayer.stop();
                             mediaPlayer.reset();
                             mediaPlayer.release();
@@ -1083,13 +1072,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             mediaPlayer.reset();
                             mediaPlayer.release();
                             mediaPlayer = null;
-                            mediaPlayer = MediaPlayer.create(v.getContext(), message.getAudioUri());
+                            mediaPlayer = MediaPlayer.create(v.getContext(), Uri.parse(message.getAudioLocalLocation()));
                             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                 @Override
                                 public void onPrepared(MediaPlayer mediaPlayer) {
 
                                     mediaPlayer.start();
-                                    playingPosition = message.getAudioUri().toString();
+                                    playingPosition = message.getAudioLocalLocation();
                                     audioSeekbar.setMax(mediaPlayer.getDuration());
                                     playPauseView.change(false);
                                 }
@@ -1098,13 +1087,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         }
                     } else {
 
-                        mediaPlayer = MediaPlayer.create(v.getContext(), message.getAudioUri());
+                        mediaPlayer = MediaPlayer.create(v.getContext(), Uri.parse(message.getAudioLocalLocation()));
                         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                             @Override
                             public void onPrepared(MediaPlayer mediaPlayer) {
 
                                 mediaPlayer.start();
-                                playingPosition = message.getAudioUri().toString();
+                                playingPosition = message.getAudioLocalLocation();
                                 audioSeekbar.setMax(mediaPlayer.getDuration());
                                 playPauseView.change(false);
                             }
@@ -1784,6 +1773,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                             }
                                                         });
                                                     } else {
+                                                        holder1.playPauseView.setVisibility(View.VISIBLE);
+                                                        holder1.downloadLeftAudio.setVisibility(View.GONE);
+                                                        holder1.adCircleProgressAudioLV.setVisibility(View.GONE);
+                                                        holder1.downloadLeftAudio.setOnClickListener(null);
+                                                        holder1.adCircleProgressAudioLV.setOnClickListener(null);
                                                         holder1.setMessage(message);
                                                     }
                                                 }
@@ -1791,17 +1785,80 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                             } else {
 
 
-                                                final RightAudioViewHolder holder1 = (RightAudioViewHolder) holder;
+                                                if (holder instanceof RightAudioViewHolder) {
+                                                    final RightAudioViewHolder holder1 = (RightAudioViewHolder) holder;
 
-                                                holder1.rightTimeTV.setText(message.getTime());
-                                                if (message.getUserIcon() != null) {
-                                                    Picasso.with(context).load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
+                                                    holder1.rightTimeTV.setText(message.getTime());
+                                                    if (message.getUserIcon() != null) {
+                                                        Picasso.with(context).load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
+                                                    }
+                                                    holder1.senderNameTV.setText(message.getUserName());
+
+                                                    if (TextUtils.isEmpty(message.getAudioLocalLocation())) {
+                                                        holder1.playPauseView.setVisibility(View.GONE);
+                                                        holder1.downloadRightAudio.setVisibility(View.VISIBLE);
+                                                        holder1.adCircleProgressAudioRV.setVisibility(View.GONE);
+                                                        holder1.downloadRightAudio.setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                final String localDir = "/FrenzApp/Media/Audios/";
+                                                                final String localfileName = System.currentTimeMillis() + ".mp3";
+
+                                                                final DownloadTask downloadTask =
+                                                                        new DownloadTask(context,
+                                                                                holder1.adCircleProgressAudioRV,
+                                                                                holder1.downloadRightAudio,
+                                                                                message);
+                                                                holder1.adCircleProgressAudioRV.setOnClickListener(new View.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(View v) {
+                                                                        holder1.downloadRightAudio.setVisibility(View.VISIBLE);
+                                                                        holder1.adCircleProgressAudioRV.setVisibility(View.GONE);
+                                                                        downloadTask.cancel(true);
+                                                                    }
+                                                                });
+                                                                downloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
+                                                            }
+                                                        });
+                                                    } else {
+                                                        if (!(new File(message.getAudioLocalLocation()).exists())) {
+                                                            holder1.playPauseView.setVisibility(View.GONE);
+                                                            holder1.downloadRightAudio.setVisibility(View.VISIBLE);
+                                                            holder1.adCircleProgressAudioRV.setVisibility(View.GONE);
+                                                            holder1.downloadRightAudio.setOnClickListener(new View.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(View v) {
+                                                                    final String localDir = "/FrenzApp/Media/Audios/";
+                                                                    final String localfileName = System.currentTimeMillis() + ".mp3";
+
+                                                                    final DownloadTask downloadTask =
+                                                                            new DownloadTask(context,
+                                                                                    holder1.adCircleProgressAudioRV,
+                                                                                    holder1.downloadRightAudio,
+                                                                                    message);
+                                                                    holder1.adCircleProgressAudioRV.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            holder1.downloadRightAudio.setVisibility(View.VISIBLE);
+                                                                            holder1.adCircleProgressAudioRV.setVisibility(View.GONE);
+                                                                            downloadTask.cancel(true);
+                                                                        }
+                                                                    });
+                                                                    downloadTask.execute("https://d.mp3-send.com/DvWBZB:Z3z1rB", localDir, localfileName);
+                                                                }
+                                                            });
+                                                        } else {
+                                                            holder1.playPauseView.setVisibility(View.VISIBLE);
+                                                            holder1.downloadRightAudio.setVisibility(View.GONE);
+                                                            holder1.adCircleProgressAudioRV.setVisibility(View.GONE);
+                                                            holder1.downloadRightAudio.setOnClickListener(null);
+                                                            holder1.adCircleProgressAudioRV.setOnClickListener(null);
+                                                            holder1.setMessage(message);
+                                                        }
+                                                    }
+                                                } else {
+
                                                 }
-
-
-                                                holder1.senderNameTV.setText(message.getUserName());
-
-                                                holder1.setMessage(message);
 
                                             }
                                         }
