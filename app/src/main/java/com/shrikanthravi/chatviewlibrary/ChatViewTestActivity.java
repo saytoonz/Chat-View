@@ -9,14 +9,9 @@ import android.provider.MediaStore;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 
-import com.balysv.materialripple.MaterialRippleLayout;
-import com.github.zagum.expandicon.ExpandIconView;
-import com.shrikanthravi.chatview.widget.ChatView;
-import com.shrikanthravi.chatview.data.Message;
+import com.shrikanthravi.chatviewlibrary.widget.ChatView;
+import com.shrikanthravi.chatviewlibrary.data.Message;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
@@ -26,14 +21,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
+
+import static com.shrikanthravi.chatviewlibrary.data.MessageAdapter.stopMediaPlayer;
 
 public class ChatViewTestActivity extends AppCompatActivity {
 
 
-    HorizontalScrollView moreHSV;
-    ExpandIconView expandIconView;
-    MaterialRippleLayout galleryMRL;
     public static int imagePickerRequestCode=10;
     public static int SELECT_VIDEO=11;
     public static int CAMERA_REQUEST=12;
@@ -143,21 +136,6 @@ public class ChatViewTestActivity extends AppCompatActivity {
         String time = mdformat.format(calendar.getTime());
         return time;
     }
-
-
-
-    public static String getRandomText() {
-        Random generator = new Random();
-        StringBuilder randomStringBuilder = new StringBuilder();
-        int randomLength = generator.nextInt(30);
-        char tempChar;
-        for (int i = 0; i < randomLength; i++){
-            tempChar = (char) (generator.nextInt(96) + 32);
-            randomStringBuilder.append(tempChar);
-        }
-        return randomStringBuilder.toString();
-    }
-
 
 
     @Override
@@ -358,5 +336,16 @@ public class ChatViewTestActivity extends AppCompatActivity {
     }
 
 
+//    @Override
+//    protected void onPause() {
+//        stopMediaPlayer();
+//        super.onPause();
+//    }
 
+    @Override
+    protected void onDestroy() {
+        stopMediaPlayer();
+        super.onDestroy();
+    }
 }
+

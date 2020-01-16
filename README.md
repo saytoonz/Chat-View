@@ -53,7 +53,7 @@ dependencies {
 
 Drop the ChatView in your XML layout as is shown below:
 ```xml
-    <com.shrikanthravi.chatview.widget.ChatView
+    <com.shrikanthravi.chatviewlibrary.widget.ChatView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:showSenderLayout="false" 
@@ -65,7 +65,7 @@ Drop the ChatView in your XML layout as is shown below:
         app:showSenderName="true"
         android:id="@+id/chatView">
 
-    </com.shrikanthravi.chatview.widget.ChatView>
+    </com.shrikanthravi.chatviewlibrary.widget.ChatView>
 
 ```
 don't forget to add this attribute to your root layout.
@@ -424,7 +424,7 @@ Note: You can customize the chatview in both xml and java way.
 ```xml
 //xml 
 
-<com.shrikanthravi.chatview.widget.ChatView
+<com.shrikanthravi.chatviewlibrary.widget.ChatView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 	app:showLeftBubbleIcon="true or false" //  (4)

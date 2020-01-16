@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     tools:context="com.shrikanthravi.chatviewlibrary.ChatViewTestActivity">
 
-    <com.shrikanthravi.chatview.widget.ChatView
+    <com.shrikanthravi.chatviewlibrary.widget.ChatView
         android:id="@+id/chatView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +18,7 @@
         app:showSenderLayout="true"
         app:showSenderName="true">
 
-    </com.shrikanthravi.chatview.widget.ChatView>
+    </com.shrikanthravi.chatviewlibrary.widget.ChatView>
 
 
 </RelativeLayout>

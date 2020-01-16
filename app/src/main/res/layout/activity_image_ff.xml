@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
-    android:fitsSystemWindows="true"
-    tools:context="com.shrikanthravi.chatviewlibrary.ImageFFActivity">
+    tools:context="com.shrikanthravi.chatviewlibrary.activities.ImageFFActivity">
 
     <com.github.chrisbanes.photoview.PhotoView
         android:layout_width="match_parent"
@@ -14,4 +13,5 @@
         android:id="@+id/photoView"
         android:transitionName="photoTransition"
         android:scaleType="fitCenter"/>
+
 </RelativeLayout>
