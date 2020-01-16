@@ -62,6 +62,21 @@
                             android:scaleType="centerCrop"
                             android:src="@drawable/icons8_download_200"
                             android:elevation="20dp"/>
+
+
+                        <com.app.adprogressbarlib.AdCircleProgress
+                            android:id="@+id/right_pgb_progress"
+                            android:layout_gravity="center"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:backgroundTintMode="add"
+                            app:adpgb_finished_color="@color/colorAccent"
+                            app:adpgb_unfinished_color="@android:color/white"
+                            app:adpgb_finished_stroke_width="5dp"
+                            app:adpgb_inner_drawable="@drawable/ic_close_icon"
+                            app:adpgb_show_text="false"
+                            app:adpgb_unfinished_stroke_width="5dp"
+                            android:visibility="visible"/>
                     </androidx.cardview.widget.CardView>
 
 

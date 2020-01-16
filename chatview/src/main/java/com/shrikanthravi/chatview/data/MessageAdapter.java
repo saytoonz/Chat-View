@@ -652,7 +652,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public CardView leftIVCV;
         public ImageView leftIV;
         public LinearLayout videoLL;
-        AdCircleProgress adCircleProgress;
+        AdCircleProgress adCircleProgressLV;
 
         public LeftVideoViewHolder(View view) {
             super(view);
@@ -666,7 +666,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             leftBubbleIconCV = view.findViewById(R.id.leftBubbleIconCV);
             videoLL = view.findViewById(R.id.videoLL);
             downloadLeftVideo = view.findViewById(R.id.downloadLeftVideo);
-            adCircleProgress = view.findViewById(R.id.left_pgb_progress);
+            adCircleProgressLV = view.findViewById(R.id.left_pgb_progress);
 
             setBackgroundColor(leftBubbleLayoutColor);
             setSenderNameTextColor(senderNameTextColor);
@@ -718,6 +718,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public ImageView rightMessageStatusIV, rightBubbleIconIV, downloadRightVideo;
         public CardView rightBubbleIconCV, rightIVCV;
         public LinearLayout videoLL;
+        AdCircleProgress adCircleProgressRV;
+
 
         public RightVideoViewHolder(View view) {
             super(view);
@@ -730,6 +732,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             rightBubbleIconIV = view.findViewById(R.id.rightBubbleIconIV);
             videoLL = view.findViewById(R.id.videoLL);
             downloadRightVideo = view.findViewById(R.id.downloadRightVideo);
+            adCircleProgressRV = view.findViewById(R.id.right_pgb_progress);
 
             setBackgroundColor(rightBubbleLayoutColor);
             setSenderNameTextColor(senderNameTextColor);
@@ -1410,7 +1413,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                         if (TextUtils.isEmpty(message.getVideoLocalLocation())) {
                                             holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
-                                            holder1.adCircleProgress.setVisibility(View.GONE);
+                                            holder1.adCircleProgressLV.setVisibility(View.GONE);
                                             holder1.downloadLeftVideo.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
@@ -1419,7 +1422,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                     final DownloadTask downloadTask =
                                                             new DownloadTask(context,
-                                                                    holder1.adCircleProgress,
+                                                                    holder1.adCircleProgressLV,
                                                                     holder1.downloadLeftVideo,
                                                                     message);
                                                     downloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
@@ -1446,7 +1449,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                     .into(imageView);
 
                                         } else {
-                                            holder1.adCircleProgress.setVisibility(View.GONE);
+                                            holder1.adCircleProgressLV.setVisibility(View.GONE);
                                             holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
                                             holder1.downloadLeftVideo.setImageResource(R.drawable.video_icon);
                                             final VideoPlayer videoPlayer = new VideoPlayer(context);
@@ -1478,16 +1481,90 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                     } else {
                                         if (holder instanceof RightVideoViewHolder) {
                                             final RightVideoViewHolder holder1 = (RightVideoViewHolder) holder;
+
+                                            if (message.getUserIcon() != null) {
+                                                Picasso.with(context).load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
+                                            }
+                                            holder1.senderNameTV.setText(message.getUserName());
+                                            holder1.leftTimeTV.setText(message.getTime());
+
+                                            if (TextUtils.isEmpty(message.getVideoLocalLocation())) {
+                                                holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
+                                                holder1.adCircleProgressLV.setVisibility(View.GONE);
+                                                holder1.downloadLeftVideo.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        final String localDir =  "/FrenzApp/Videos/";
+                                                        final String localfileName = System.currentTimeMillis() + ".mp4";
+
+                                                        final DownloadTask downloadTask =
+                                                                new DownloadTask(context,
+                                                                        holder1.adCircleProgressLV,
+                                                                        holder1.downloadLeftVideo,
+                                                                        message);
+                                                        downloadTask.execute("https://firebasestorage.googleapis.com/v0/b/flic" +
+                                                                "kering-heat-5334.appspot.com" +
+                                                                "/o/demo1.mp4?alt=media&token=f6d" +
+                                                                "82bb0-f61f-45bc-ab13-16970c7432c4", localDir, localfileName);
+                                                    }
+                                                });
+
+                                                final ImageView imageView = new ImageView(context);
+                                                RelativeLayout.LayoutParams params =
+                                                        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                                                RelativeLayout.LayoutParams.MATCH_PARENT);
+                                                imageView.setLayoutParams(params);
+                                                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                                holder1.videoLL.addView(imageView);
+
+                                                Glide.with(context)
+                                                        .load("https://firebasestorage.googleapis.com/v0/b/flic" +
+                                                                "kering-heat-5334.appspot.com" +
+                                                                "/o/demo1.mp4?alt=media&token=f6d" +
+                                                                "82bb0-f61f-45bc-ab13-16970c7432c4")
+                                                        .apply(new RequestOptions().placeholder(R.drawable.boy))
+                                                        .into(imageView);
+
+                                            } else {
+                                                holder1.adCircleProgressLV.setVisibility(View.GONE);
+                                                holder1.downloadLeftVideo.setVisibility(View.VISIBLE);
+                                                holder1.downloadLeftVideo.setImageResource(R.drawable.video_icon);
+                                                final VideoPlayer videoPlayer = new VideoPlayer(context);
+                                                RelativeLayout.LayoutParams params =
+                                                        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                                                RelativeLayout.LayoutParams.MATCH_PARENT);
+                                                videoPlayer.setLayoutParams(params);
+                                                videoPlayer.setScaleType(VideoPlayer.ScaleType.CENTER_CROP);
+                                                holder1.videoLL.addView(videoPlayer);
+//                                            videoPlayer.loadVideo(message.getVideoUri().toString(), message);
+                                                videoPlayer.loadVideo(message.getVideoLocalLocation(), message);
+                                                videoPlayer.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                                                            mediaPlayer.pause();
+                                                        }
+                                                        videoPlayer.setTransitionName("videoFF");
+                                                        Intent intent = new Intent(context, VideoFFActivity.class);
+                                                        intent.putExtra("videoURI", message.getVideoLocalLocation());
+                                                        ActivityOptionsCompat optionsCompat =
+                                                                ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,
+                                                                        videoPlayer, videoPlayer.getTransitionName());
+                                                        context.startActivity(intent, optionsCompat.toBundle());
+                                                    }
+                                                });
+                                            }
+
                                             final VideoPlayer videoPlayer = new VideoPlayer(context);
-                                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                                            RelativeLayout.LayoutParams params =
+                                                    new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                                            RelativeLayout.LayoutParams.MATCH_PARENT);
                                             videoPlayer.setScaleType(VideoPlayer.ScaleType.CENTER_CROP);
                                             videoPlayer.setLayoutParams(params);
                                             holder1.videoLL.addView(videoPlayer);
                                             videoPlayer.loadVideo(message.getVideoUri().toString(), message);
 
-                                            if (message.getUserIcon() != null) {
-                                                Picasso.with(context).load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
-                                            }
+
 
                                             videoPlayer.setOnClickListener(new View.OnClickListener() {
                                                 @Override
