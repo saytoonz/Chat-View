@@ -43,8 +43,10 @@ public class ChatDownloadTask extends AsyncTask<String, Integer, String> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        downloadImageView.setVisibility(View.GONE);
-        adCircleProgress.setVisibility(View.VISIBLE);
+        if (downloadImageView != null)
+            downloadImageView.setVisibility(View.GONE);
+        if (adCircleProgress != null)
+            adCircleProgress.setVisibility(View.VISIBLE);
     }
 
 
@@ -124,26 +126,31 @@ public class ChatDownloadTask extends AsyncTask<String, Integer, String> {
     protected void onProgressUpdate(Integer... progress) {
         super.onProgressUpdate(progress);
         // if we get here, length is known, now set indeterminate to false
-        adCircleProgress.setAdProgress(progress[0]);
+        if (adCircleProgress != null)
+            adCircleProgress.setAdProgress(progress[0]);
     }
 
     @Override
     protected void onPostExecute(String result) {
 //        mWakeLock.release();
         if (result == null) {
-            Toast.makeText(context, "Download error", Toast.LENGTH_LONG).show();
-            downloadImageView.setVisibility(View.VISIBLE);
-            adCircleProgress.setVisibility(View.GONE);
+            if (downloadImageView != null)
+                downloadImageView.setVisibility(View.VISIBLE);
+            if (adCircleProgress != null)
+                adCircleProgress.setVisibility(View.GONE);
+            Log.e("ChatDownloadTask", "Download error");
         } else {
-            if (result.contains("/FrenzApp/Media/Videos/")) {
-                message.setVideoLocalLocation(result);
-            } else if (result.contains("/FrenzApp/Media/Audios/")) {
-                message.setAudioLocalLocation(result);
-            } else if (result.contains("/FrenzApp/Media/Images/")) {
-                message.setImageLocalLocation(result);
+            if (message != null) {
+                if (result.contains("/FrenzApp/Media/Videos/")) {
+                    message.setVideoLocalLocation(result);
+                } else if (result.contains("/FrenzApp/Media/Audios/")) {
+                    message.setAudioLocalLocation(result);
+                } else if (result.contains("/FrenzApp/Media/Images/")) {
+                    message.setImageLocalLocation(result);
+                }
+                updater();
             }
-            updater();
-            Log.e("ChatDownloadTask", "onPostExecute ------> File downloaded to : " + result );
+            Log.e("ChatDownloadTask", "onPostExecute ------> File downloaded to : " + result);
         }
     }
 }

@@ -35,7 +35,8 @@ public class Message {
     protected String body;
     protected String time;
     protected String status;
-    protected List<ImageList> imageList;
+    protected List<Uri> imageList;
+    protected List<String> imageListNames;
     protected String userName;
     protected Uri userIcon;
     protected Uri videoUri;
@@ -126,12 +127,20 @@ public class Message {
         this.status = status;
     }
 
-    public List<ImageList> getImageList() {
+    public List<Uri> getImageList() {
         return imageList;
     }
 
-    public void setImageList(List<ImageList> imageList) {
+    public void setImageList(List<Uri> imageList) {
         this.imageList = imageList;
+    }
+
+    public List<String> getImageListNames() {
+        return imageListNames;
+    }
+
+    public void setImageListNames(List<String> imageListNames) {
+        this.imageListNames = imageListNames;
     }
 
     public String getUserName() {

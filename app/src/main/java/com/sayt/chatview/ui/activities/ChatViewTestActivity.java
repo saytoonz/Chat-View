@@ -6,13 +6,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 
 import com.sayt.chatview.R;
 import com.sayt.chatview.helpers.PicassoEngine;
-import com.sayt.chatview.models.ImageList;
 import com.sayt.chatview.ui.widget.ChatView;
 import com.sayt.chatview.models.Message;
 import com.zhihu.matisse.Matisse;
@@ -29,13 +30,14 @@ import static com.sayt.chatview.adapters.MessageAdapter.stopMediaPlayer;
 public class ChatViewTestActivity extends AppCompatActivity {
 
 
-    public static int imagePickerRequestCode=10;
-    public static int SELECT_VIDEO=11;
-    public static int CAMERA_REQUEST=12;
-    public static int SELECT_AUDIO=13;
+    public static int imagePickerRequestCode = 10;
+    public static int SELECT_VIDEO = 11;
+    public static int CAMERA_REQUEST = 12;
+    public static int SELECT_AUDIO = 13;
     ChatView chatView;
-    boolean switchbool=true;
-    List<ImageList> mSelected;
+    boolean switchbool = true;
+    List<Uri> mSelected;
+    List<String> mSelectedLocal;
 
 
     @Override
@@ -45,13 +47,14 @@ public class ChatViewTestActivity extends AppCompatActivity {
 
         chatView = findViewById(R.id.chatView);
         chatView.requestFocus();
-        mSelected  = new ArrayList<>();
+        mSelected = new ArrayList<>();
+        mSelectedLocal = new ArrayList<>();
 
         //Send button click listerer
         chatView.setOnClickSendButtonListener(new ChatView.OnClickSendButtonListener() {
             @Override
             public void onSendButtonClick(String body) {
-                if(switchbool) {
+                if (switchbool) {
                     Message message = new Message();
                     message.setBody(body);
                     message.setMessageType(Message.MessageType.RightSimpleImage);
@@ -60,9 +63,8 @@ public class ChatViewTestActivity extends AppCompatActivity {
                     message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                     chatView.addMessage(message);
 
-                    switchbool=false;
-                }
-                else{
+                    switchbool = false;
+                } else {
                     Message message1 = new Message();
                     message1.setBody(body);
                     message1.setMessageType(Message.MessageType.LeftSimpleMessage);
@@ -71,7 +73,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                     message1.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                     chatView.addMessage(message1);
 
-                    switchbool=true;
+                    switchbool = true;
                 }
             }
         });
@@ -124,7 +126,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                 Intent intent_upload = new Intent();
                 intent_upload.setType("audio/*");
                 intent_upload.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent_upload,SELECT_AUDIO);
+                startActivityForResult(intent_upload, SELECT_AUDIO);
             }
         });
 
@@ -132,7 +134,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
     }
 
 
-    public String getTime(){
+    public String getTime() {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         SimpleDateFormat mdformat = new SimpleDateFormat("dd MMM yyyy HH:mm");
         String time = mdformat.format(calendar.getTime());
@@ -145,18 +147,18 @@ public class ChatViewTestActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
 
-
-        switch (requestCode){
-            case 10:{
+        switch (requestCode) {
+            case 10: {
 
                 //Image Selection result
-                if(resultCode==RESULT_OK){
-                    List<Uri> list = Matisse.obtainResult(data);
-                    mSelected.clear();
-                    for (int i = 0; i<list.size(); i++)
-                        mSelected.add(new ImageList(list.get(i),""));
+                if (resultCode == RESULT_OK) {
+                    mSelected = Matisse.obtainResult(data);
+                    mSelectedLocal.clear();
+                    for (int i = 0; i < mSelected.size(); i++) {
+                        mSelectedLocal.add("1579225193965.jpg");
+                    }
 
-                    if(switchbool) {
+                    if (switchbool) {
                         if (mSelected.size() == 1) {
                             Message message = new Message();
 //                            message.setBody(messageET.getText().toString().trim());
@@ -165,24 +167,24 @@ public class ChatViewTestActivity extends AppCompatActivity {
                             message.setTime(getTime());
                             message.setUserName("Groot");
                             message.setImageList(mSelected);
+                            message.setImageLocalLocation("");
                             message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                             chatView.addMessage(message);
-                            switchbool=false;
+                            switchbool = false;
                         } else {
 
                             Message message = new Message();
-//                            message.setBody(messageET.getText().toString().trim());
                             message.setBody("");
                             message.setMessageType(Message.MessageType.RightMultipleImages);
                             message.setTime(getTime());
                             message.setUserName("Groot");
                             message.setImageList(mSelected);
+                            message.setImageListNames(mSelectedLocal);
                             message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                             chatView.addMessage(message);
-                            switchbool=false;
+                            switchbool = false;
                         }
-                    }
-                    else{
+                    } else {
 
                         if (mSelected.size() == 1) {
                             Message message = new Message();
@@ -194,7 +196,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                             message.setImageList(mSelected);
                             message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                             chatView.addMessage(message);
-                            switchbool=true;
+                            switchbool = true;
                         } else {
 
                             Message message = new Message();
@@ -204,19 +206,20 @@ public class ChatViewTestActivity extends AppCompatActivity {
                             message.setTime(getTime());
                             message.setUserName("Hodor");
                             message.setImageList(mSelected);
+                            message.setImageListNames(mSelectedLocal);
                             message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                             chatView.addMessage(message);
-                            switchbool=true;
+                            switchbool = true;
                         }
 
                     }
                 }
                 break;
             }
-            case 11:{
+            case 11: {
 
                 //Video Selection Result
-                if(resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     if (switchbool) {
                         Message message = new Message();
                         message.setMessageType(Message.MessageType.RightVideo);
@@ -240,7 +243,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                 }
                 break;
             }
-            case 12:{
+            case 12: {
 
                 //Image Capture result
 
@@ -256,7 +259,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                         File file = new File(Environment.getExternalStorageDirectory(), "MyPhoto.jpg");
                         //Uri of camera image
                         Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
-                        mSelected.add(new ImageList(uri,""));
+                        mSelected.add(uri);
                         message.setImageList(mSelected);
                         message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                         chatView.addMessage(message);
@@ -271,7 +274,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                         File file = new File(Environment.getExternalStorageDirectory(), "MyPhoto.jpg");
                         //Uri of camera image
                         Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
-                        mSelected.add(new ImageList(uri,""));
+                        mSelected.add(uri);
                         message.setImageList(mSelected);
                         message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                         chatView.addMessage(message);
@@ -280,8 +283,8 @@ public class ChatViewTestActivity extends AppCompatActivity {
                 }
                 break;
             }
-            case 13:{
-                if(resultCode == RESULT_OK){
+            case 13: {
+                if (resultCode == RESULT_OK) {
                     if (switchbool) {
                         Message message = new Message();
                         message.setMessageType(Message.MessageType.RightAudio);
@@ -310,34 +313,27 @@ public class ChatViewTestActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
     public String getPathVideo(Uri uri) {
-        System.out.println("getpath "+uri.toString());
-        String[] projection = { MediaStore.Video.Media.DATA };
+        System.out.println("getpath " + uri.toString());
+        String[] projection = {MediaStore.Video.Media.DATA};
         Cursor cursor = managedQuery(uri, projection, null, null, null);
-        if(cursor!=null) {
+        if (cursor != null) {
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
             cursor.moveToFirst();
             return cursor.getString(column_index);
-        }
-        else return null;
+        } else return null;
     }
 
     public String getPathAudio(Uri uri) {
-        System.out.println("getpath "+uri.toString());
-        String[] projection = { MediaStore.Audio.Media.DATA };
+        System.out.println("getpath " + uri.toString());
+        String[] projection = {MediaStore.Audio.Media.DATA};
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
 
         int columnIndex = cursor.getColumnIndex(projection[0]);
         cursor.moveToFirst();
-        if(cursor!=null) {
+        if (cursor != null) {
             return cursor.getString(columnIndex);
-        }
-        else return null;
+        } else return null;
     }
 
 

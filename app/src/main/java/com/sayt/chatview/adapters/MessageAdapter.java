@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,6 +49,7 @@ import com.silencedut.expandablelayout.ExpandableLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,8 +93,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     }
 
-    public static void stopMediaPlayer(){
-        if (mediaPlayer!=null)
+    public static void stopMediaPlayer() {
+        if (mediaPlayer != null)
             if (mediaPlayer.isPlaying())
                 mediaPlayer.stop();
     }
@@ -1230,7 +1232,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     holder1.senderNameTV.setText(message.getUserName());
                     holder1.leftTimeTV.setText(message.getTime());
 
-                    if (TextUtils.isEmpty(message.getImageLocalLocation())){
+                    if (TextUtils.isEmpty(message.getImageLocalLocation())) {
                         holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
                         holder1.downloadLeftImage.setVisibility(View.VISIBLE);
                         holder1.downloadLeftImage.setOnClickListener(new View.OnClickListener() {
@@ -1257,7 +1259,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             }
                         });
                         Glide.with(context).load("https://cdn.pixabay.com/photo/2013/07/21/13/00/rose-165819__340.jpg").into(holder1.leftIV);
-                    }else{
+                    } else {
                         if (!(new File(message.getImageLocalLocation()).exists())) {
                             holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
                             holder1.downloadLeftImage.setVisibility(View.VISIBLE);
@@ -1289,23 +1291,23 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                     .load("https://cdn.pixabay.com/photo/2013/07/21/13/00/rose-165819__340.jpg")
                                     .into(holder1.leftIV);
 
-                        }else{
+                        } else {
                             holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
                             holder1.downloadLeftImage.setVisibility(View.GONE);
                             if (message.getImageLocalLocation() != null
                                     && !message.getImageLocalLocation().equals("")) {
                                 final File image =
-                                        DiskCacheUtils.findInCache(message.getImageList().get(0).getLocalLocation(),
+                                        DiskCacheUtils.findInCache(message.getImageLocalLocation(),
                                                 imageLoader.getDiskCache());
                                 if (image != null && image.exists()) {
                                     Picasso.get().load(image).into(holder1.leftIV);
                                 } else {
 
-                                    imageLoader.loadImage("file://"+message.getImageLocalLocation(), new ImageLoadingListener() {
+                                    imageLoader.loadImage("file://" + message.getImageLocalLocation(), new ImageLoadingListener() {
                                         @Override
                                         public void onLoadingStarted(String s, View view) {
                                             holder1.leftIV.setImageBitmap(null);
-                                            Log.e(TAG, "onLoadingStarted ----> " +s);
+                                            Log.e(TAG, "onLoadingStarted ----> " + s);
                                         }
 
                                         @Override
@@ -1333,7 +1335,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 @Override
                                 public void onClick(View view) {
                                     Intent intent = new Intent(context, ImageFFActivity.class);
-                                    intent.putExtra("photoURI", "file://"+message.getImageLocalLocation());
+                                    intent.putExtra("photoURI", "file://" + message.getImageLocalLocation());
                                     ActivityOptionsCompat optionsCompat =
                                             ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.leftIV, holder1.leftIV.getTransitionName());
                                     context.startActivity(intent, optionsCompat.toBundle());
@@ -1356,7 +1358,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         holder1.senderNameTV.setText(message.getUserName());
                         holder1.rightTimeTV.setText(message.getTime());
 
-                        if (TextUtils.isEmpty(message.getImageLocalLocation())){
+                        if (TextUtils.isEmpty(message.getImageLocalLocation())) {
                             holder1.adCircleProgressRightIV.setVisibility(View.GONE);
                             holder1.downloadRightImage.setVisibility(View.VISIBLE);
                             holder1.downloadRightImage.setOnClickListener(new View.OnClickListener() {
@@ -1387,7 +1389,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             Glide.with(context).load("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
                                     "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s").into(holder1.rightIV);
 
-                        }else{
+                        } else {
                             if (!(new File(message.getImageLocalLocation()).exists())) {
                                 holder1.adCircleProgressRightIV.setVisibility(View.GONE);
                                 holder1.downloadRightImage.setVisibility(View.VISIBLE);
@@ -1417,7 +1419,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 });
                                 Glide.with(context).load("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
                                         "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s").into(holder1.rightIV);
-                            }else{
+                            } else {
                                 holder1.adCircleProgressRightIV.setVisibility(View.GONE);
                                 holder1.downloadRightImage.setVisibility(View.GONE);
                                 if (message.getImageLocalLocation() != null
@@ -1429,7 +1431,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                         Picasso.get().load(image).into(holder1.rightIV);
                                     } else {
 
-                                        imageLoader.loadImage("file://"+message.getImageLocalLocation(), new ImageLoadingListener() {
+                                        imageLoader.loadImage("file://" + message.getImageLocalLocation(), new ImageLoadingListener() {
                                             @Override
                                             public void onLoadingStarted(String s, View view) {
                                                 holder1.rightIV.setImageBitmap(null);
@@ -1461,7 +1463,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                     @Override
                                     public void onClick(View view) {
                                         Intent intent = new Intent(context, ImageFFActivity.class);
-                                        intent.putExtra("photoURI", "file://"+message.getImageLocalLocation());
+                                        intent.putExtra("photoURI", "file://" + message.getImageLocalLocation());
                                         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.rightIV, holder1.rightIV.getTransitionName());
                                         context.startActivity(intent, optionsCompat.toBundle());
                                     }
@@ -1477,16 +1479,44 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         if (holder instanceof LeftImagesViewHolder) {
                             final LeftImagesViewHolder holder1 = (LeftImagesViewHolder) holder;
 
+                            String localDir = "/FrenzApp/Media/Images/";
+                            String dirPath = Environment.getExternalStorageDirectory().getPath()
+                                    + localDir;
+
                             if (message.getUserIcon() != null) {
                                 Picasso.get().load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
                             }
                             holder1.senderNameTV.setText(message.getUserName());
-
-                            List<String> imageList = new ArrayList<>();
-                            for (int i = 0; i < message.getImageList().size(); i++) {
-                                imageList.add(message.getImageList().get(i).toString());
-                            }
                             holder1.leftTimeTV.setText(message.getTime());
+
+
+                            final List<String> imageList = new ArrayList<>();
+                            for (int i = 0; i < message.getImageList().size(); i++) {
+
+                                if (message.getImageListNames().get(i) != null
+                                        && !TextUtils.isEmpty(message.getImageListNames().get(i))) {
+
+                                    File file = new File( dirPath + message.getImageListNames().get(i));
+                                    if (file.exists()) {
+                                        imageList.add("file://" + dirPath + message.getImageListNames().get(i));
+                                    } else {
+                                        imageList.add(message.getImageList().get(i).toString());
+                                        final ChatDownloadTask chatDownloadTask =
+                                                new ChatDownloadTask(context, null, null, null);
+                                        chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                        "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir,
+                                                message.getImageListNames().get(i));
+                                    }
+
+                                } else {
+                                    imageList.add(message.getImageList().get(i).toString());
+                                    final ChatDownloadTask chatDownloadTask =
+                                            new ChatDownloadTask(context, null, null, null);
+                                    chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                    "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir,
+                                            message.getImageListNames().get(i));
+                                }
+                            }
 
                             holder1.leftCollageView
                                     .photoMargin(8)
@@ -1501,9 +1531,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             holder1.leftCollageView.setOnPhotoClickListener(new CollageView.OnPhotoClickListener() {
                                 @Override
                                 public void onPhotoClick(int i) {
-
                                     Intent intent = new Intent(context, ImageFFActivity.class);
-                                    intent.putExtra("photoURI", message.getImageList().get(i).toString());
+                                    intent.putExtra("photoURI", imageList.get(i));
                                     ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.leftCollageView, holder1.leftCollageView.getTransitionName());
                                     context.startActivity(intent, optionsCompat.toBundle());
                                 }
@@ -1514,15 +1543,45 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             if (holder instanceof RightImagesViewHolder) {
                                 final RightImagesViewHolder holder1 = (RightImagesViewHolder) holder;
 
+                                String localDir = "/FrenzApp/Media/Images/Sent/";
+                                String dirPath = Environment.getExternalStorageDirectory().getPath()
+                                        + localDir;
+
                                 if (message.getUserIcon() != null) {
                                     Picasso.get().load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
                                 }
                                 holder1.senderNameTV.setText(message.getUserName());
-                                List<String> imageList = new ArrayList<>();
-                                for (int i = 0; i < message.getImageList().size(); i++) {
-                                    imageList.add(message.getImageList().get(i).toString());
-                                }
                                 holder1.rightTimeTV.setText(message.getTime());
+
+                                final List<String> imageList = new ArrayList<>();
+                                for (int i = 0; i < message.getImageList().size(); i++) {
+
+                                    if (message.getImageListNames().get(i) != null
+                                            && !TextUtils.isEmpty(message.getImageListNames().get(i))) {
+
+                                        File file = new File( dirPath + message.getImageListNames().get(i));
+                                        if (file.exists()) {
+                                            imageList.add("file://" + dirPath + message.getImageListNames().get(i));
+                                        } else {
+                                            imageList.add(message.getImageList().get(i).toString());
+                                            final ChatDownloadTask chatDownloadTask =
+                                                    new ChatDownloadTask(context, null, null, null);
+                                            chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                            "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir,
+                                                    message.getImageListNames().get(i));
+                                        }
+
+                                    } else {
+                                        imageList.add(message.getImageList().get(i).toString());
+                                        final ChatDownloadTask chatDownloadTask =
+                                                new ChatDownloadTask(context, null, null, null);
+                                        chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                        "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir,
+                                                message.getImageListNames().get(i));
+                                    }
+                                }
+
+
                                 holder1.rightCollageView
                                         .photoMargin(8)
                                         .photoPadding(0)
@@ -1536,9 +1595,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 holder1.rightCollageView.setOnPhotoClickListener(new CollageView.OnPhotoClickListener() {
                                     @Override
                                     public void onPhotoClick(int i) {
-
                                         Intent intent = new Intent(context, ImageFFActivity.class);
-                                        intent.putExtra("photoURI", message.getImageList().get(i).toString());
+                                        intent.putExtra("photoURI", imageList.get(i));
                                         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.rightCollageView, holder1.rightCollageView.getTransitionName());
                                         context.startActivity(intent, optionsCompat.toBundle());
                                     }
@@ -2088,7 +2146,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void setTextSize(float size) {
         this.textSize = size;
     }
-
 
 
 }
