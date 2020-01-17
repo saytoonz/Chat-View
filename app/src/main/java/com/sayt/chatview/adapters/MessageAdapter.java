@@ -9,13 +9,6 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,6 +20,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.adprogressbarlib.AdCircleProgress;
 import com.bumptech.glide.Glide;
@@ -37,14 +37,13 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.DiskCacheUtils;
 import com.ohoussein.playpause.PlayPauseView;
 import com.sayt.chatview.R;
-import com.sayt.chatview.ui.activities.ImageFFActivity;
-import com.sayt.chatview.ui.activities.VideoFFActivity;
 import com.sayt.chatview.helpers.ChatDownloadTask;
 import com.sayt.chatview.models.Message;
-import com.sayt.chatview.utils.FontChanger;
-
+import com.sayt.chatview.ui.activities.ImageFFActivity;
+import com.sayt.chatview.ui.activities.VideoFFActivity;
 import com.sayt.chatview.ui.views.CollageView;
 import com.sayt.chatview.ui.views.VideoPlayer;
+import com.sayt.chatview.utils.FontChanger;
 import com.silencedut.expandablelayout.ExpandableLayout;
 import com.squareup.picasso.Picasso;
 
@@ -52,11 +51,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import static android.content.ContentValues.TAG;
 
 /**
- * Created by shrikanthravi on 16/02/18.
+ * Created by say on 16/01/20.
  */
 
 
@@ -396,14 +394,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public TextView leftTimeTV, senderNameTV;
         public ExpandableLayout leftEL;
-        public ImageView lefttMessageStatusIV, leftBubbleIconIV;
+        public ImageView lefttMessageStatusIV, leftBubbleIconIV, downloadLeftImage;
         public CardView leftBubbleIconCV;
         public CardView leftIVCV;
         public ImageView leftIV;
+        private AdCircleProgress adCircleProgressLeftIV;
 
         public LeftImageViewHolder(View view) {
             super(view);
-
 
             leftTimeTV = view.findViewById(R.id.leftTimeTV);
             leftEL = view.findViewById(R.id.leftEL);
@@ -412,6 +410,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             senderNameTV = view.findViewById(R.id.senderNameTV);
             leftBubbleIconIV = view.findViewById(R.id.leftBubbleIconIV);
             leftBubbleIconCV = view.findViewById(R.id.leftBubbleIconCV);
+            downloadLeftImage = view.findViewById(R.id.downloadLeftImage);
+            adCircleProgressLeftIV = view.findViewById(R.id.left_image_pgb_progress);
 
             setBackgroundColor(leftBubbleLayoutColor);
             setSenderNameTextColor(senderNameTextColor);
@@ -460,10 +460,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public TextView rightTV, rightTimeTV, senderNameTV;
         public ExpandableLayout rightEL;
-        public ImageView rightMessageStatusIV, rightBubbleIconIV;
+        public ImageView rightMessageStatusIV, rightBubbleIconIV, downloadRightImage;
         public CardView rightBubbleIconCV;
         public CardView rightIVCV;
         public ImageView rightIV;
+        public AdCircleProgress adCircleProgressRightIV;
 
         public RightImageViewHolder(View view) {
             super(view);
@@ -476,6 +477,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             senderNameTV = view.findViewById(R.id.senderNameTV);
             rightBubbleIconCV = view.findViewById(R.id.rightBubbleIconCV);
             rightBubbleIconIV = view.findViewById(R.id.rightBubbleIconIV);
+            downloadRightImage = view.findViewById(R.id.downloadRightImage);
+            adCircleProgressRightIV = view.findViewById(R.id.right_image_pgb_progress);
+
+
             FontChanger fontChanger = new FontChanger(typeface);
             fontChanger.replaceFonts((ViewGroup) view);
             setBackgroundColor(rightBubbleLayoutColor);
@@ -1223,50 +1228,118 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         Picasso.get().load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
                     }
                     holder1.senderNameTV.setText(message.getUserName());
-                    if (message.getImageList().get(0) != null && !message.getImageList().get(0).equals("")) {
-                        final File image = DiskCacheUtils.findInCache(message.getImageList().get(0).toString(), imageLoader.getDiskCache());
-                        if (image != null && image.exists()) {
-                            Picasso.get().load(image).into(holder1.leftIV);
-                        } else {
-                            imageLoader.loadImage(message.getImageList().get(0).toString(), new ImageLoadingListener() {
-                                @Override
-                                public void onLoadingStarted(String s, View view) {
-                                    holder1.leftIV.setImageBitmap(null);
-                                }
-
-                                @Override
-                                public void onLoadingFailed(String s, View view, FailReason failReason) {
-
-                                }
-
-                                @Override
-                                public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
-                                    Picasso.get().load(s).into(holder1.leftIV);
-
-                                }
-
-                                @Override
-                                public void onLoadingCancelled(String s, View view) {
-
-                                }
-                            });
-                        }
-                    } else {
-                        holder1.leftIV.setImageBitmap(null);
-                    }
-
                     holder1.leftTimeTV.setText(message.getTime());
 
-                    holder1.leftIV.setTransitionName("photoTransition");
-                    holder1.leftIV.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(context, ImageFFActivity.class);
-                            intent.putExtra("photoURI", message.getImageList().get(0).toString());
-                            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.leftIV, holder1.leftIV.getTransitionName());
-                            context.startActivity(intent, optionsCompat.toBundle());
+                    if (TextUtils.isEmpty(message.getImageList().get(0).getLocalLocation())){
+                        holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                        holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                        holder1.downloadLeftImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final String localDir = "/FrenzApp/Media/Images/";
+                                final String localFileName = System.currentTimeMillis() + ".jpg";
+
+                                final ChatDownloadTask chatDownloadTask =
+                                        new ChatDownloadTask(context,
+                                                holder1.adCircleProgressLeftIV,
+                                                holder1.downloadLeftImage,
+                                                message);
+
+                                holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        chatDownloadTask.cancel(true);
+                                        holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                                        holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                    }
+                                });
+                                chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                        "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
+                            }
+                        });
+
+                    }else{
+                        if (!(new File(message.getImageList().get(0).getLocalLocation()).exists())) {
+                            holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                            holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                            holder1.downloadLeftImage.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    final String localDir = "/FrenzApp/Media/Images/";
+                                    final String localFileName = System.currentTimeMillis() + ".jpg";
+
+                                    final ChatDownloadTask chatDownloadTask =
+                                            new ChatDownloadTask(context,
+                                                    holder1.adCircleProgressLeftIV,
+                                                    holder1.downloadLeftImage,
+                                                    message);
+
+                                    holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            chatDownloadTask.cancel(true);
+                                            holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                                            holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                        }
+                                    });
+                                    chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                            "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
+                                }
+                            });
+                        }else{
+                            holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                            holder1.downloadLeftImage.setVisibility(View.GONE);
+                            if (message.getImageList().get(0).getLocalLocation() != null && !message.getImageList().get(0).getLocalLocation().equals("")) {
+                                final File image =
+                                        DiskCacheUtils.findInCache(message.getImageList().get(0).getLocalLocation(),
+                                                imageLoader.getDiskCache());
+                                if (image != null && image.exists()) {
+                                    Picasso.get().load(image).into(holder1.leftIV);
+                                } else {
+
+                                    imageLoader.loadImage("file://"+message.getImageList().get(0).getLocalLocation(), new ImageLoadingListener() {
+                                        @Override
+                                        public void onLoadingStarted(String s, View view) {
+                                            holder1.leftIV.setImageBitmap(null);
+                                            Log.e(TAG, "onLoadingStarted ----> " +s);
+                                        }
+
+                                        @Override
+                                        public void onLoadingFailed(String s, View view, FailReason failReason) {
+                                            Log.e(TAG, failReason.toString());
+                                        }
+
+                                        @Override
+                                        public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
+                                            Picasso.get().load(s).into(holder1.leftIV);
+
+                                        }
+
+                                        @Override
+                                        public void onLoadingCancelled(String s, View view) {
+
+                                        }
+                                    });
+                                }
+                            } else {
+                                holder1.leftIV.setImageBitmap(null);
+                            }
+                            holder1.leftIV.setTransitionName("photoTransition");
+                            holder1.leftIV.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intent = new Intent(context, ImageFFActivity.class);
+                                    intent.putExtra("photoURI", "file://"+message.getImageList().get(0).getLocalLocation());
+                                    ActivityOptionsCompat optionsCompat =
+                                            ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.leftIV, holder1.leftIV.getTransitionName());
+                                    context.startActivity(intent, optionsCompat.toBundle());
+                                }
+                            });
+
                         }
-                    });
+                    }
+
+
                 } else {
 
 
@@ -1277,49 +1350,117 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             Picasso.get().load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
                         }
                         holder1.senderNameTV.setText(message.getUserName());
+                        holder1.rightTimeTV.setText(message.getTime());
 
-                        if (message.getImageList().get(0) != null && !message.getImageList().get(0).equals("")) {
-                            final File image = DiskCacheUtils.findInCache(message.getImageList().get(0).toString(), imageLoader.getDiskCache());
-                            if (image != null && image.exists()) {
-                                Picasso.get().load(image).into(holder1.rightIV);
-                            } else {
-                                imageLoader.loadImage(message.getImageList().get(0).toString(), new ImageLoadingListener() {
+                        if (TextUtils.isEmpty(message.getImageList().get(0).getLocalLocation())){
+                            holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                            holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                            holder1.downloadRightImage.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    final String localDir = "/FrenzApp/Media/Images/";
+                                    final String localFileName = System.currentTimeMillis() + ".jpg";
+
+                                    final ChatDownloadTask chatDownloadTask =
+                                            new ChatDownloadTask(context,
+                                                    holder1.adCircleProgressRightIV,
+                                                    holder1.downloadRightImage,
+                                                    message);
+
+                                    holder1.adCircleProgressRightIV.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            chatDownloadTask.cancel(true);
+                                            holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                            holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                        }
+                                    });
+                                    chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                            "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
+                                }
+                            });
+
+                        }else{
+                            if (!(new File(message.getImageList().get(0).getLocalLocation()).exists())) {
+                                holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                holder1.downloadRightImage.setOnClickListener(new View.OnClickListener() {
                                     @Override
-                                    public void onLoadingStarted(String s, View view) {
-                                        holder1.rightIV.setImageBitmap(null);
-                                    }
+                                    public void onClick(View v) {
+                                        final String localDir = "/FrenzApp/Media/Images/";
+                                        final String localFileName = System.currentTimeMillis() + ".jpg";
 
-                                    @Override
-                                    public void onLoadingFailed(String s, View view, FailReason failReason) {
+                                        final ChatDownloadTask chatDownloadTask =
+                                                new ChatDownloadTask(context,
+                                                        holder1.adCircleProgressRightIV,
+                                                        holder1.downloadRightImage,
+                                                        message);
 
-                                    }
-
-                                    @Override
-                                    public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
-                                        Picasso.get().load(s).into(holder1.rightIV);
-
-                                    }
-
-                                    @Override
-                                    public void onLoadingCancelled(String s, View view) {
-
+                                        holder1.adCircleProgressRightIV.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                chatDownloadTask.cancel(true);
+                                                holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                                holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                            }
+                                        });
+                                        chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
                                     }
                                 });
+                            }else{
+                                holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                holder1.downloadRightImage.setVisibility(View.GONE);
+                                if (message.getImageList().get(0).getLocalLocation() != null
+                                        && !message.getImageList().get(0).getLocalLocation().equals("")) {
+                                    final File image =
+                                            DiskCacheUtils.findInCache(message.getImageList().get(0).getLocalLocation(),
+                                                    imageLoader.getDiskCache());
+                                    if (image != null && image.exists()) {
+                                        Picasso.get().load(image).into(holder1.rightIV);
+                                    } else {
+
+                                        imageLoader.loadImage("file://"+message.getImageList().get(0).getLocalLocation(), new ImageLoadingListener() {
+                                            @Override
+                                            public void onLoadingStarted(String s, View view) {
+                                                holder1.rightIV.setImageBitmap(null);
+                                            }
+
+                                            @Override
+                                            public void onLoadingFailed(String s, View view, FailReason failReason) {
+                                                Log.e(TAG, failReason.toString());
+                                            }
+
+                                            @Override
+                                            public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
+                                                Picasso.get().load(s).into(holder1.rightIV);
+
+                                            }
+
+                                            @Override
+                                            public void onLoadingCancelled(String s, View view) {
+
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    holder1.rightIV.setImageBitmap(null);
+                                }
+
+                                holder1.rightIV.setTransitionName("photoTransition");
+                                holder1.rightIV.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(context, ImageFFActivity.class);
+                                        intent.putExtra("photoURI", "file://"+message.getImageList().get(0).getLocalLocation());
+                                        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.rightIV, holder1.rightIV.getTransitionName());
+                                        context.startActivity(intent, optionsCompat.toBundle());
+                                    }
+                                });
+
                             }
-                        } else {
-                            holder1.rightIV.setImageBitmap(null);
                         }
-                        holder1.rightIV.setTransitionName("photoTransition");
-                        holder1.rightIV.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(context, ImageFFActivity.class);
-                                intent.putExtra("photoURI", message.getImageList().get(0).toString());
-                                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.rightIV, holder1.rightIV.getTransitionName());
-                                context.startActivity(intent, optionsCompat.toBundle());
-                            }
-                        });
-                        holder1.rightTimeTV.setText(message.getTime());
+
 
                     } else {
 
@@ -1445,8 +1586,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                             RelativeLayout.LayoutParams params =
                                                     new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                                                             RelativeLayout.LayoutParams.MATCH_PARENT);
-                                            imageView.setLayoutParams(params);
                                             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                            imageView.setLayoutParams(params);
                                             holder1.videoLL.addView(imageView);
 
                                             Glide.with(context)
@@ -1493,8 +1634,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                 RelativeLayout.LayoutParams params =
                                                         new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                                                                 RelativeLayout.LayoutParams.MATCH_PARENT);
-                                                imageView.setLayoutParams(params);
                                                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                                imageView.setLayoutParams(params);
                                                 holder1.videoLL.addView(imageView);
 
                                                 Glide.with(context)
@@ -1598,8 +1739,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                 RelativeLayout.LayoutParams params =
                                                         new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                                                                 RelativeLayout.LayoutParams.MATCH_PARENT);
-                                                imageView.setLayoutParams(params);
                                                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                                imageView.setLayoutParams(params);
                                                 holder1.videoLL.addView(imageView);
 
                                                 Glide.with(context)
@@ -1644,8 +1785,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                     RelativeLayout.LayoutParams params =
                                                             new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                                                                     RelativeLayout.LayoutParams.MATCH_PARENT);
-                                                    imageView.setLayoutParams(params);
                                                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                                    imageView.setLayoutParams(params);
                                                     holder1.videoLL.addView(imageView);
 
                                                     Glide.with(context)
@@ -1938,6 +2079,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void setTextSize(float size) {
         this.textSize = size;
     }
+
 
 
 }

@@ -10,7 +10,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 /**
- * Created by shrikanthravi on 16/02/18.
+ * Created by say on 16/01/20.
  */
 
 public class App extends Application {

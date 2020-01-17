@@ -28,7 +28,7 @@ import java.util.List;
 import jp.wasabeef.recyclerview.animators.ScaleInBottomAnimator;
 
 /**
- * Created by shrikanthravi on 20/02/18.
+ * * Created by say on 16/01/20.
  */
 
 public class ChatView extends RelativeLayout {

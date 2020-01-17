@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by alan on 08.12.16.
+ * * Created by say on 16/01/20.
  */
 
 public class CollageView extends LinearLayout {

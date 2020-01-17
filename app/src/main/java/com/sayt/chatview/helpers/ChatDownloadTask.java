@@ -140,10 +140,10 @@ public class ChatDownloadTask extends AsyncTask<String, Integer, String> {
             } else if (result.contains("/FrenzApp/Media/Audios/")) {
                 message.setAudioLocalLocation(result);
             } else if (result.contains("/FrenzApp/Media/Images/")) {
-                message.setImageLocalLocation(result);
+                message.getImageList().get(0).setLocalLocation(result);
             }
             updater();
-            Toast.makeText(context, "File downloaded to : " + result, Toast.LENGTH_SHORT).show();
+            Log.e("ChatDownloadTask", "onPostExecute ------> File downloaded to : " + result );
         }
     }
 }

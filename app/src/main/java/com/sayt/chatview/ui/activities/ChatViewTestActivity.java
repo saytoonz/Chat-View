@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import com.sayt.chatview.R;
 import com.sayt.chatview.helpers.PicassoEngine;
+import com.sayt.chatview.models.ImageList;
 import com.sayt.chatview.ui.widget.ChatView;
 import com.sayt.chatview.models.Message;
 import com.zhihu.matisse.Matisse;
@@ -34,7 +35,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
     public static int SELECT_AUDIO=13;
     ChatView chatView;
     boolean switchbool=true;
-    List<Uri> mSelected;
+    List<ImageList> mSelected;
 
 
     @Override
@@ -150,7 +151,10 @@ public class ChatViewTestActivity extends AppCompatActivity {
 
                 //Image Selection result
                 if(resultCode==RESULT_OK){
-                    mSelected = Matisse.obtainResult(data);
+                    List<Uri> list = Matisse.obtainResult(data);
+                    mSelected.clear();
+                    for (int i = 0; i<list.size(); i++)
+                        mSelected.add(new ImageList(list.get(i),""));
 
                     if(switchbool) {
                         if (mSelected.size() == 1) {
@@ -252,7 +256,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                         File file = new File(Environment.getExternalStorageDirectory(), "MyPhoto.jpg");
                         //Uri of camera image
                         Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
-                        mSelected.add(uri);
+                        mSelected.add(new ImageList(uri,""));
                         message.setImageList(mSelected);
                         message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
                         chatView.addMessage(message);
@@ -267,7 +271,7 @@ public class ChatViewTestActivity extends AppCompatActivity {
                         File file = new File(Environment.getExternalStorageDirectory(), "MyPhoto.jpg");
                         //Uri of camera image
                         Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", file);
-                        mSelected.add(uri);
+                        mSelected.add(new ImageList(uri,""));
                         message.setImageList(mSelected);
                         message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
                         chatView.addMessage(message);

@@ -6,7 +6,7 @@ import android.net.Uri;
 import java.util.List;
 
 /**
- * Created by shrikanthravi on 16/02/18.
+ * * Created by say on 16/01/20.
  */
 
 
@@ -35,14 +35,13 @@ public class Message {
     protected String body;
     protected String time;
     protected String status;
-    protected List<Uri> imageList;
+    protected List<ImageList> imageList;
     protected String userName;
     protected Uri userIcon;
     protected Uri videoUri;
     protected Uri audioUri;
     private String audioLocalLocation;
     private String videoLocalLocation;
-    private String imageLocalLocation;
     protected int indexPosition;
 
     public enum MessageType{
@@ -126,11 +125,11 @@ public class Message {
         this.status = status;
     }
 
-    public List<Uri> getImageList() {
+    public List<ImageList> getImageList() {
         return imageList;
     }
 
-    public void setImageList(List<Uri> imageList) {
+    public void setImageList(List<ImageList> imageList) {
         this.imageList = imageList;
     }
 
@@ -172,14 +171,6 @@ public class Message {
 
     public void setVideoLocalLocation(String videoLocalLocation) {
         this.videoLocalLocation = videoLocalLocation;
-    }
-
-    public String getImageLocalLocation() {
-        return imageLocalLocation;
-    }
-
-    public void setImageLocalLocation(String imageLocalLocation) {
-        this.imageLocalLocation = imageLocalLocation;
     }
 }
 

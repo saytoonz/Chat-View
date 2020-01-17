@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import com.sayt.chatview.ui.views.CollageView.ImageForm;
 
 /**
- * Created by alan on 08.12.16.
+ * * Created by say on 16/01/20.
  */
 
 public class RectangleImageView extends ImageView {

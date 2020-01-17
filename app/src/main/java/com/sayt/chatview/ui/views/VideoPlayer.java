@@ -15,7 +15,7 @@ import com.sayt.chatview.models.Message;
 import java.io.IOException;
 
 /**
- * Created by shrikanthravi on 22/02/18.
+ * * Created by say on 16/01/20.
  */
 public class VideoPlayer extends TextureView implements TextureView.SurfaceTextureListener {
 

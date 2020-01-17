@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso;
 import com.zhihu.matisse.engine.ImageEngine;
 
 /**
- * {@link ImageEngine} implementation using Picasso.
+ * * Created by say on 16/01/20.
  */
 
 public class PicassoEngine implements ImageEngine {
