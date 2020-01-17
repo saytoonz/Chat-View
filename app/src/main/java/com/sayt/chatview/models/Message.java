@@ -42,6 +42,7 @@ public class Message {
     protected Uri audioUri;
     private String audioLocalLocation;
     private String videoLocalLocation;
+    private String imageLocalLocation;
     protected int indexPosition;
 
     public enum MessageType{
@@ -171,6 +172,14 @@ public class Message {
 
     public void setVideoLocalLocation(String videoLocalLocation) {
         this.videoLocalLocation = videoLocalLocation;
+    }
+
+    public String getImageLocalLocation() {
+        return imageLocalLocation;
+    }
+
+    public void setImageLocalLocation(String imageLocalLocation) {
+        this.imageLocalLocation = imageLocalLocation;
     }
 }
 

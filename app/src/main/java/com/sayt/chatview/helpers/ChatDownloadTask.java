@@ -140,7 +140,7 @@ public class ChatDownloadTask extends AsyncTask<String, Integer, String> {
             } else if (result.contains("/FrenzApp/Media/Audios/")) {
                 message.setAudioLocalLocation(result);
             } else if (result.contains("/FrenzApp/Media/Images/")) {
-                message.getImageList().get(0).setLocalLocation(result);
+                message.setImageLocalLocation(result);
             }
             updater();
             Log.e("ChatDownloadTask", "onPostExecute ------> File downloaded to : " + result );
