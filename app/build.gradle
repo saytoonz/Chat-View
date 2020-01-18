@@ -54,4 +54,9 @@ dependencies {
 
     implementation 'com.karumi:dexter:6.0.1'
 
+
+    implementation project(path: ':emoticongifkeyboard')
+    implementation project(path: ':emoticonpack-samsung')
+    implementation project(path: ':gifpack-giphy')
+
 }

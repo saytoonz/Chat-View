@@ -12,12 +12,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.github.zagum.expandicon.ExpandIconView;
+import com.nsromapa.emoticompack.samsung.SamsungEmoticonProvider;
+import com.nsromapa.say.emogifstickerkeyboard.widget.EmoticonEditText;
 import com.sayt.chatview.R;
 import com.sayt.chatview.models.Message;
 import com.sayt.chatview.adapters.MessageAdapter;
@@ -42,6 +45,7 @@ public class ChatView extends RelativeLayout {
     protected int mode=1;
     protected boolean more=false;
     protected RelativeLayout mLayoutRoot;
+    protected FrameLayout keyboard_container;
     protected RecyclerView chatRV;
     protected LinearLayout sendLL;
     protected MaterialRippleLayout sendMRL;
@@ -54,7 +58,7 @@ public class ChatView extends RelativeLayout {
     protected boolean showLeftBubbleIcon=true;
     protected boolean showRightBubbleIcon=true;
     protected boolean showSenderName=true;
-    protected EditText messageET;
+    protected EmoticonEditText messageET;
 
     private int leftBubbleLayoutColor = R.color.colorAccent2;
     private int rightBubbleLayoutColor = R.color.colorAccent1;
@@ -93,6 +97,14 @@ public class ChatView extends RelativeLayout {
     }
 
 
+    public FrameLayout getKeyboard_container() {
+        return keyboard_container;
+    }
+
+    public void setKeyboard_container(FrameLayout keyboard_container) {
+        this.keyboard_container = keyboard_container;
+    }
+
     protected void init(Context context){
 
         mContext = context;
@@ -103,6 +115,7 @@ public class ChatView extends RelativeLayout {
 
         //initialize UI
         mLayoutRoot = rootView.findViewById(R.id.rootRL);
+        keyboard_container = rootView.findViewById(R.id.keyboard_container);
         chatRV = rootView.findViewById(R.id.chatRV);
         sendLL = rootView.findViewById(R.id.sendLL);
         sendMRL = rootView.findViewById(R.id.sendMRL);
@@ -123,6 +136,7 @@ public class ChatView extends RelativeLayout {
         chatRV.setItemAnimator(new ScaleInBottomAnimator(new OvershootInterpolator(1f)));
         chatRV.setAdapter(messageAdapter);
 
+        messageET.setEmoticonProvider(SamsungEmoticonProvider.create());
 
         expandIconView.setState(1,false);
 
