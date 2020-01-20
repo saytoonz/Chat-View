@@ -30,6 +30,8 @@ import com.nsromapa.say.emogifstickerkeyboard.gifs.Gif;
 
 import java.util.List;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 /**
  * Created by Keval Patel on 22/08/17.
  * Adapter to display GIFs in the Recycler view.
@@ -72,9 +74,9 @@ final class GifSearchAdapter extends RecyclerView.Adapter<GifSearchAdapter.GifVi
         final Gif gif = mData.get(position);
         if (gif != null) {
             Glide.with(mContext)
-                    .load(gif.getPreviewGifUrl())
                     .asGif()
-                    .crossFade()
+                    .load(gif.getPreviewGifUrl())
+                    .transition(withCrossFade())
                     .centerCrop()
                     .into(holder.gifIv);
 

@@ -30,6 +30,8 @@ import com.nsromapa.say.emogifstickerkeyboard.gifs.Gif;
 
 import java.util.List;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 /**
  * Created by Keval on 18-Aug-17.
  * Adapter to display Trending GIFs in the GridView.
@@ -88,9 +90,9 @@ final class GifGridAdapter extends ArrayAdapter<Gif> {
         final Gif gif = getItem(position);
         if (gif != null) {
             Glide.with(mContext)
-                    .load(gif.getPreviewGifUrl())
                     .asGif()
-                    .crossFade()
+                    .load(gif.getPreviewGifUrl())
+                    .transition(withCrossFade())
                     .centerCrop()
                     .into(holder.gifIv);
 
