@@ -380,6 +380,8 @@ public class ChatView extends RelativeLayout {
 
         if (recordingBehaviour == RecordingBehaviour.LOCKED) {
             stopARL.setVisibility(View.VISIBLE);
+            recordARL.setEnabled(false);
+            recordARL.setFocusable(false);
 
             if (recordingListener != null)
                 recordingListener.onRecordingLocked();
@@ -389,6 +391,8 @@ public class ChatView extends RelativeLayout {
             timeText.setVisibility(View.INVISIBLE);
             imageViewMic.setVisibility(View.INVISIBLE);
             stopARL.setVisibility(View.GONE);
+            recordARL.setEnabled(true);
+            recordARL.setFocusable(true);
 
             timerTask.cancel();
             delete();
@@ -408,6 +412,8 @@ public class ChatView extends RelativeLayout {
             timeText.setVisibility(View.INVISIBLE);
             imageViewMic.setVisibility(View.INVISIBLE);
             stopARL.setVisibility(View.GONE);
+            recordARL.setEnabled(true);
+            recordARL.setFocusable(true);
 
             timerTask.cancel();
 

@@ -52,7 +52,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
 
     implementation 'com.karumi:dexter:6.0.1'
-
+    implementation 'com.kailashdabhi:om-recorder:1.1.5'
 
     implementation project(path: ':emoticongifkeyboard')
     implementation project(path: ':emoticonpack-samsung')

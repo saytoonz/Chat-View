@@ -224,33 +224,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
             }
         });
 
-//
-//        messageEditText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (mEmoticonGIFKeyboardFragment.isOpen()) {
-//                    //Check if keyboard is open and close it if it is
-//                    if (inputMethodManager.isAcceptingText()) {
-//                        inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
-//                    }
-//                }
-//            }
-//        });
-//
-//        messageEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if (hasFocus)
-//                    if (mEmoticonGIFKeyboardFragment.isOpen())
-//                        //Check if keyboard is open and close it if it is
-//                        if (inputMethodManager.isAcceptingText()) {
-//                            inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
-//                        }
-//            }
-//        });
 
-
-        //Send button click listerer
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
