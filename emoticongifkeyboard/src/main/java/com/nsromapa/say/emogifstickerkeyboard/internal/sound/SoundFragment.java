@@ -84,7 +84,7 @@ public final class SoundFragment extends Fragment implements SoundAdapter.ItemSe
 
         if (!dir.exists())
             dir.mkdirs();
-//        Create Directory if does not exist
+
         if (dir.exists()) {
             soundImagesArr.clear();
             File[] files = dir.listFiles();

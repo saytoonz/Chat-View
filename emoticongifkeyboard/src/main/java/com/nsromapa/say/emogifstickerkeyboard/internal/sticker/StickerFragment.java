@@ -85,9 +85,7 @@ public final class StickerFragment extends Fragment implements StickerAdapter.It
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        Log.e("FrenzApp/stickers/", dir.getAbsolutePath() );
 
-//        Create Directory if does not exist
         if (dir.exists()) {
             stickers.clear();
             File[] files = dir.listFiles();
