@@ -420,7 +420,7 @@ public class ChatView extends RelativeLayout {
                 public void run() {
                     recordingLayout.setVisibility(View.GONE);
                 }
-            }, 100);
+            }, 50);
 
         }
     }
