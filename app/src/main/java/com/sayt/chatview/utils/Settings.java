@@ -3,7 +3,7 @@ package com.sayt.chatview.utils;
 public class Settings {
 
     public static boolean autoSaveSingleImageToGallery(){
-        return true;
+        return false;
     }
 
     public static boolean autoSaveMultipleImagesToGallery(){
@@ -11,10 +11,10 @@ public class Settings {
     }
 
     public static boolean autoSaveSingleVideoToGallery(){
-        return true;
+        return false;
     }
 
     public static boolean autoSaveSingleAudioToPhone(){
-        return true;
+        return false;
     }
 }

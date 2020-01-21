@@ -121,7 +121,6 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         sampleRate = AudioSampleRate.HZ_16000;
 
 
-
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,18 +214,18 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     }
 
     private void resumeRecording() {
-        if (!isRecordingPaused){
-            String location =  Environment.getExternalStorageDirectory().getPath() + "/FrenzApp/Media/Audios/Sent/Rec/";
+        if (!isRecordingPaused) {
+            String location = Environment.getExternalStorageDirectory().getPath() + "/FrenzApp/Media/Audios/Sent/Rec/";
             File dir = new File(location);
             if (!dir.exists())
                 dir.mkdirs();
-            filePath = location +"/FRZMGS"+System.currentTimeMillis()+".wav";
+            filePath = location + "/FRZMGS" + System.currentTimeMillis() + ".wav";
         }
         isRecording = true;
         ImageView playPauseIcon = chatView.getPauseResumeARL().findViewById(R.id.pause_resume_imageView);
         playPauseIcon.setImageResource(R.drawable.pause_microphone_100);
 
-        if(recorder == null) {
+        if (recorder == null) {
             chatView.getTimeText().setText("00:00");
 
             recorder = OmRecorder.wav(
@@ -238,7 +237,6 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
 
         startTimer();
     }
-
 
 
     private void pauseRecording() {
@@ -255,7 +253,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         stopTimer();
     }
 
-    private void stopRecording(){
+    private void stopRecording() {
         isRecordingPaused = false;
         recorderSecondsElapsed = 0;
         if (recorder != null) {
@@ -280,7 +278,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     }
 
 
-    private void startTimer(){
+    private void startTimer() {
         stopTimer();
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -291,7 +289,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         }, 0, 1000);
     }
 
-    private void stopTimer(){
+    private void stopTimer() {
         if (timer != null) {
             timer.cancel();
             timer.purge();
@@ -303,14 +301,13 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(isRecording) {
+                if (isRecording) {
                     recorderSecondsElapsed++;
                     chatView.getTimeText().setText(Utils.formatSeconds(recorderSecondsElapsed));
                 }
             }
         });
     }
-
 
 
     private void initializeEmojiGifStickerKeyBoard() {
@@ -352,6 +349,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
                     public void onStickerSelectListner(@NonNull File sticker) {
                         Log.d(TAG, "stickerSelected: " + sticker);
                         Toast.makeText(ChatViewTestActivity.this, sticker.getName(), Toast.LENGTH_SHORT).show();
+                        sendNewSticker(sticker);
                     }
                 });
 
@@ -408,6 +406,37 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
                 }
             }
         });
+    }
+
+    private void sendNewSticker(File sticker) {
+        Log.e(TAG, "sendNewSticker: " + sticker.getName());
+
+        mSelected.clear();
+        mSelected.add(Uri.parse(sticker.getAbsolutePath()));
+
+        if (switchbool) {
+            Message message = new Message();
+            message.setBody(sticker.getName());
+            message.setMessageType(Message.MessageType.RightSticker);
+            message.setTime(getTime());
+            message.setUserName("Groot");
+            message.setImageLocalLocation(sticker.getAbsolutePath());
+            message.setImageList(mSelected);
+            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
+            chatView.addMessage(message);
+            switchbool = false;
+        } else {
+            Message message = new Message();
+            message.setBody(sticker.getName());
+            message.setMessageType(Message.MessageType.LeftSticker);
+            message.setTime(getTime());
+            message.setUserName("Hodor");
+            message.setImageLocalLocation(sticker.getAbsolutePath());
+            message.setImageList(mSelected);
+            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
+            chatView.addMessage(message);
+            switchbool = true;
+        }
     }
 
     public String getTime() {
@@ -561,7 +590,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
             }
             case 13: {
                 if (resultCode == RESULT_OK) {
-                    sendAudio(data.getData(),"");
+                    sendAudio(data.getData(), "");
                 }
                 break;
             }
@@ -570,9 +599,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     }
 
 
-
-
-    private void sendAudio(Uri uri, String localPath){
+    private void sendAudio(Uri uri, String localPath) {
         if (uri == null) return;
 
         if (switchbool) {
@@ -598,7 +625,6 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
             switchbool = true;
         }
     }
-
 
 
     public String getPathVideo(Uri uri) {
@@ -697,13 +723,13 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     public void onRecordingStarted() {
         pauseMediaPlayer();
         isStillHold = true;
-        Log.e(TAG,"onRecordingStarted");
+        Log.e(TAG, "onRecordingStarted");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-             if (isStillHold){
-                 resumeRecording();
-             }
+                if (isStillHold) {
+                    resumeRecording();
+                }
             }
         }, 1500);
 
@@ -711,15 +737,15 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
 
     @Override
     public void onRecordingLocked() {
-        Log.e(TAG,"onRecordingLocked");
+        Log.e(TAG, "onRecordingLocked");
     }
 
     @Override
     public void onRecordingCompleted() {
         isStillHold = false;
         isRecordingPaused = false;
-        Log.e(TAG,"onRecordingCompleted");
-        if (recorderSecondsElapsed > 1){
+        Log.e(TAG, "onRecordingCompleted");
+        if (recorderSecondsElapsed > 1) {
             stopRecording();
             Utils.wait(2000, new Runnable() {
                 @Override
@@ -738,9 +764,8 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         isStillHold = false;
         isRecordingPaused = false;
         resumeMediaPlayer();
-        Log.e(TAG,"onRecordingCanceled");
+        Log.e(TAG, "onRecordingCanceled");
     }
-
 
 
     @Override

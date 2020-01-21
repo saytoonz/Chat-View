@@ -64,7 +64,9 @@ public class ChatDownloadTask extends AsyncTask<String, Integer, String> {
 
             File file = new File(Environment.getExternalStorageDirectory().getPath() + sUrl_fileName[1] + "/.nomedia");
             try {
-                if (!file.exists() && sUrl_fileName[1].contains("Sent"))
+                if (!file.exists() && (sUrl_fileName[1].contains("/Sent/")
+                        || sUrl_fileName[1].contains("/sticker/") ||
+                        sUrl_fileName[1].contains("/sounds/")))
                     file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();

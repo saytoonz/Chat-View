@@ -157,6 +157,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 type = 10;
                 break;
             }
+            case LeftSticker: {
+                type = 11;
+                break;
+            }
+            case RightSticker: {
+                type = 12;
+                break;
+            }
         }
         if (type == 0) {
             throw new RuntimeException("Set Message Type ( Message Type is Null )");
@@ -225,9 +233,29 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                         .inflate(R.layout.left_audio_layout, parent, false);
                                                 viewHolder = new LeftAudioViewHolder(view);
                                             } else {
-                                                View view = LayoutInflater.from(parent.getContext())
-                                                        .inflate(R.layout.right_audio_layout, parent, false);
-                                                viewHolder = new RightAudioViewHolder(view);
+
+                                                if (viewType == 10) {
+                                                    View view = LayoutInflater.from(parent.getContext())
+                                                            .inflate(R.layout.right_audio_layout, parent, false);
+                                                    viewHolder = new RightAudioViewHolder(view);
+                                                } else {
+
+
+                                                    if (viewType == 11) {
+                                                        View view = LayoutInflater.from(parent.getContext())
+                                                                .inflate(R.layout.left_sticker_layout, parent, false);
+                                                        viewHolder = new LeftStickerViewHolder(view);
+                                                    } else {
+
+//                                                        if (viewType == 12) {
+                                                        View view = LayoutInflater.from(parent.getContext())
+                                                                .inflate(R.layout.right_sticker_layout, parent, false);
+                                                        viewHolder = new RightStickerViewHolder(view);
+//                                                        } else {
+//
+//                                                        }
+                                                    }
+                                                }
                                             }
 
                                         }
@@ -538,6 +566,142 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
     }
+
+
+    protected class LeftStickerViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView leftTimeTV, senderNameTV;
+        public ExpandableLayout leftEL;
+        public ImageView lefttMessageStatusIV, leftBubbleIconIV, downloadLeftImage;
+        public CardView leftBubbleIconCV;
+        public CardView leftIVCV;
+        public ImageView leftIV;
+        private AdCircleProgress adCircleProgressLeftIV;
+
+        public LeftStickerViewHolder(View view) {
+            super(view);
+
+            leftTimeTV = view.findViewById(R.id.leftTimeTV);
+            leftEL = view.findViewById(R.id.leftEL);
+            leftIV = view.findViewById(R.id.leftIV);
+            leftIVCV = view.findViewById(R.id.leftIVCV);
+            senderNameTV = view.findViewById(R.id.senderNameTV);
+            leftBubbleIconIV = view.findViewById(R.id.leftBubbleIconIV);
+            leftBubbleIconCV = view.findViewById(R.id.leftBubbleIconCV);
+            downloadLeftImage = view.findViewById(R.id.downloadLeftImage);
+            adCircleProgressLeftIV = view.findViewById(R.id.left_image_pgb_progress);
+
+            setBackgroundColor(leftBubbleLayoutColor);
+            setSenderNameTextColor(senderNameTextColor);
+            showSenderName(showSenderName);
+            showLeftBubbleIcon(showLeftBubbleIcon);
+            FontChanger fontChanger = new FontChanger(typeface);
+            fontChanger.replaceFonts((ViewGroup) view);
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    int pos = getLayoutPosition();
+
+                    return true;
+                }
+            });
+        }
+
+        public void setBackgroundColor(int color) {
+            Drawable backgroundDrawable = DrawableCompat.wrap(leftIV.getBackground()).mutate();
+            DrawableCompat.setTint(backgroundDrawable, color);
+        }
+
+        public void setSenderNameTextColor(int color) {
+            senderNameTV.setTextColor(color);
+        }
+
+        public void showSenderName(boolean b) {
+            if (b) {
+                senderNameTV.setVisibility(View.VISIBLE);
+            } else {
+                senderNameTV.setVisibility(View.GONE);
+            }
+        }
+
+        public void showLeftBubbleIcon(boolean b) {
+            if (b) {
+                leftBubbleIconCV.setVisibility(View.VISIBLE);
+            } else {
+                leftBubbleIconCV.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    protected class RightStickerViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView rightTV, rightTimeTV, senderNameTV;
+        public ExpandableLayout rightEL;
+        public ImageView rightMessageStatusIV, rightBubbleIconIV, downloadRightImage;
+        public CardView rightBubbleIconCV;
+        public CardView rightIVCV;
+        public ImageView rightIV;
+        public AdCircleProgress adCircleProgressRightIV;
+
+        public RightStickerViewHolder(View view) {
+            super(view);
+
+
+            rightTimeTV = view.findViewById(R.id.rightTimeTV);
+            rightEL = view.findViewById(R.id.rightEL);
+            rightIV = view.findViewById(R.id.rightIV);
+            rightIVCV = view.findViewById(R.id.rightIVCV);
+            senderNameTV = view.findViewById(R.id.senderNameTV);
+            rightBubbleIconCV = view.findViewById(R.id.rightBubbleIconCV);
+            rightBubbleIconIV = view.findViewById(R.id.rightBubbleIconIV);
+            downloadRightImage = view.findViewById(R.id.downloadRightImage);
+            adCircleProgressRightIV = view.findViewById(R.id.right_image_pgb_progress);
+
+
+            FontChanger fontChanger = new FontChanger(typeface);
+            fontChanger.replaceFonts((ViewGroup) view);
+            setBackgroundColor(rightBubbleLayoutColor);
+            setSenderNameTextColor(senderNameTextColor);
+            showSenderName(showSenderName);
+            showRightBubbleIcon(showRightBubbleIcon);
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    int pos = getLayoutPosition();
+
+                    return true;
+                }
+            });
+        }
+
+        public void setBackgroundColor(int color) {
+            Drawable backgroundDrawable = DrawableCompat.wrap(rightIV.getBackground()).mutate();
+            DrawableCompat.setTint(backgroundDrawable, color);
+        }
+
+        public void setSenderNameTextColor(int color) {
+            senderNameTV.setTextColor(color);
+        }
+
+        public void showSenderName(boolean b) {
+            if (b) {
+                senderNameTV.setVisibility(View.VISIBLE);
+            } else {
+                senderNameTV.setVisibility(View.GONE);
+            }
+        }
+
+        public void showRightBubbleIcon(boolean b) {
+            if (b) {
+                rightBubbleIconCV.setVisibility(View.VISIBLE);
+            } else {
+                rightBubbleIconCV.setVisibility(View.GONE);
+            }
+        }
+    }
+
 
     protected class LeftImagesViewHolder extends RecyclerView.ViewHolder {
 
@@ -1310,15 +1474,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             holder1.downloadLeftImage.setVisibility(View.VISIBLE);
 
 
-
                             ////Check if auto download single Image is enabled
                             //// if so start downloading
                             if (Settings.autoSaveSingleImageToGallery()) {
                                 final ChatDownloadTask chatDownloadTask =
-                                    new ChatDownloadTask(context,
-                                            holder1.adCircleProgressLeftIV,
-                                            holder1.downloadLeftImage,
-                                            message);
+                                        new ChatDownloadTask(context,
+                                                holder1.adCircleProgressLeftIV,
+                                                holder1.downloadLeftImage,
+                                                message);
 
                                 final String localDir = "/FrenzApp/Media/Images/";
                                 final String localFileName = System.currentTimeMillis() + ".jpg";
@@ -1834,7 +1997,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                 holder1.adCircleProgressLV.setVisibility(View.GONE);
 
 
-
                                                 ////Check if auto download single Video is enabled
                                                 //// if so start downloading
                                                 if (Settings.autoSaveSingleVideoToGallery()) {
@@ -2045,8 +2207,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                     holder1.adCircleProgressRV.setVisibility(View.GONE);
 
 
-
-
                                                     // Check auto video Download and download if enabled
                                                     if (Settings.autoSaveSingleVideoToGallery()) {
                                                         final ChatDownloadTask chatDownloadTask =
@@ -2235,8 +2395,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                         holder1.playPauseView.setVisibility(View.GONE);
                                                         holder1.downloadLeftAudio.setVisibility(View.VISIBLE);
                                                         holder1.adCircleProgressAudioLV.setVisibility(View.GONE);
-
-
 
 
                                                         // Check auto Audio Download and download if enabled
@@ -2431,6 +2589,380 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                         }
                                                     }
                                                 } else {
+
+                                                    if (holder instanceof LeftStickerViewHolder) {
+                                                        final LeftStickerViewHolder holder1 = (LeftStickerViewHolder) holder;
+
+                                                        if (message.getUserIcon() != null) {
+                                                            Picasso.get().load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
+                                                        }
+                                                        holder1.senderNameTV.setText(message.getUserName());
+                                                        holder1.leftTimeTV.setText(message.getTime());
+
+                                                        if (TextUtils.isEmpty(message.getImageLocalLocation())) {
+                                                            holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                            holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+
+
+                                                            holder1.downloadLeftImage.setOnClickListener(new View.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(View v) {
+                                                                    final ChatDownloadTask chatDownloadTask =
+                                                                            new ChatDownloadTask(context,
+                                                                                    holder1.adCircleProgressLeftIV,
+                                                                                    holder1.downloadLeftImage,
+                                                                                    message);
+
+                                                                    final String localDir = "/FrenzApp/Media/stickers/";
+                                                                    final String localFileName = message.getBody();
+                                                                    chatDownloadTask.execute("https://cdn.pixabay.com/photo/2013/07/21/13/00/rose-165819__340.jpg",
+                                                                            localDir, localFileName);
+
+                                                                    holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            chatDownloadTask.cancel(true);
+                                                                            holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                                                                            holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+
+
+                                                            ////Check if auto download single Image is enabled
+                                                            //// if so start downloading
+                                                            if (Settings.autoSaveSingleImageToGallery()) {
+                                                                final ChatDownloadTask chatDownloadTask =
+                                                                        new ChatDownloadTask(context,
+                                                                                holder1.adCircleProgressLeftIV,
+                                                                                holder1.downloadLeftImage,
+                                                                                message);
+
+                                                                final String localDir = "/FrenzApp/Media/stickers/";
+                                                                final String localFileName = message.getBody();
+                                                                chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                                        "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
+
+                                                                holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(View v) {
+                                                                        chatDownloadTask.cancel(true);
+                                                                        holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                                                                        holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                    }
+                                                                });
+                                                            }
+
+
+                                                            Glide.with(context)
+                                                                    .load("https://cdn.pixabay.com/photo/2013/07/21/13/00/rose-165819__340.jpg")
+                                                                    .into(holder1.leftIV);
+                                                        } else {
+                                                            if (!(new File(message.getImageLocalLocation()).exists())) {
+                                                                holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+
+
+                                                                ////Check if auto download single Image is enabled
+                                                                //// if so start downloading
+                                                                if (Settings.autoSaveSingleImageToGallery()) {
+                                                                    final ChatDownloadTask chatDownloadTask =
+                                                                            new ChatDownloadTask(context,
+                                                                                    holder1.adCircleProgressLeftIV,
+                                                                                    holder1.downloadLeftImage,
+                                                                                    message);
+
+                                                                    final String localDir = "/FrenzApp/Media/stickers/";
+                                                                    final String localFileName = message.getBody();
+                                                                    chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                                            "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
+
+
+                                                                    holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            chatDownloadTask.cancel(true);
+                                                                            holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                                                                            holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                        }
+                                                                    });
+                                                                }
+
+
+                                                                holder1.downloadLeftImage.setOnClickListener(new View.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(View v) {
+                                                                        final ChatDownloadTask chatDownloadTask =
+                                                                                new ChatDownloadTask(context,
+                                                                                        holder1.adCircleProgressLeftIV,
+                                                                                        holder1.downloadLeftImage,
+                                                                                        message);
+
+
+                                                                        final String localDir = "/FrenzApp/Media/stickers/";
+                                                                        final String localFileName = message.getBody();
+                                                                        chatDownloadTask.execute("https://cdn.pixabay.com/photo/2013/07/21/13/00/rose-165819__340.jpg",
+                                                                                localDir, localFileName);
+
+
+                                                                        holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View v) {
+                                                                                chatDownloadTask.cancel(true);
+                                                                                holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                                                                                holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                            }
+                                                                        });
+
+                                                                    }
+                                                                });
+
+                                                                Glide.with(context)
+                                                                        .load("https://cdn.pixabay.com/photo/2013/07/21/13/00/rose-165819__340.jpg")
+                                                                        .into(holder1.leftIV);
+
+                                                            } else {
+                                                                holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                holder1.downloadLeftImage.setVisibility(View.GONE);
+                                                                if (message.getImageLocalLocation() != null
+                                                                        && !message.getImageLocalLocation().equals("")) {
+                                                                    final File image =
+                                                                            DiskCacheUtils.findInCache(message.getImageLocalLocation(),
+                                                                                    imageLoader.getDiskCache());
+                                                                    if (image != null && image.exists()) {
+                                                                        Picasso.get().load(image).into(holder1.leftIV);
+                                                                    } else {
+
+                                                                        imageLoader.loadImage("file://" + message.getImageLocalLocation(), new ImageLoadingListener() {
+                                                                            @Override
+                                                                            public void onLoadingStarted(String s, View view) {
+                                                                                holder1.leftIV.setImageBitmap(null);
+                                                                                Log.e(TAG, "onLoadingStarted ----> " + s);
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onLoadingFailed(String s, View view, FailReason failReason) {
+                                                                                Log.e(TAG, failReason.toString());
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
+                                                                                Picasso.get().load(s).into(holder1.leftIV);
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onLoadingCancelled(String s, View view) {
+
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                } else {
+                                                                    holder1.leftIV.setImageBitmap(null);
+                                                                }
+                                                                holder1.leftIV.setTransitionName("photoTransition");
+//                                                                holder1.leftIV.setOnClickListener(new View.OnClickListener() {
+//                                                                    @Override
+//                                                                    public void onClick(View view) {
+//                                                                        Intent intent = new Intent(context, ImageFFActivity.class);
+//                                                                        intent.putExtra("photoURI", "file://" + message.getImageLocalLocation());
+//                                                                        ActivityOptionsCompat optionsCompat =
+//                                                                                ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.leftIV, holder1.leftIV.getTransitionName());
+//                                                                        context.startActivity(intent, optionsCompat.toBundle());
+//                                                                    }
+//                                                                });
+
+                                                            }
+                                                        }
+
+                                                    } else {
+
+                                                        if (holder instanceof RightStickerViewHolder) {
+                                                            final RightStickerViewHolder holder1 = (RightStickerViewHolder) holder;
+
+                                                            if (message.getUserIcon() != null) {
+                                                                Picasso.get().load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
+                                                            }
+                                                            holder1.senderNameTV.setText(message.getUserName());
+                                                            holder1.rightTimeTV.setText(message.getTime());
+
+                                                            if (TextUtils.isEmpty(message.getImageLocalLocation())) {
+                                                                holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                holder1.downloadRightImage.setVisibility(View.VISIBLE);
+
+
+                                                                ////Check if auto download single Image is enabled
+                                                                //// if so start downloading
+                                                                if (Settings.autoSaveSingleImageToGallery()) {
+                                                                    final ChatDownloadTask chatDownloadTask =
+                                                                            new ChatDownloadTask(context,
+                                                                                    holder1.adCircleProgressRightIV,
+                                                                                    holder1.downloadRightImage,
+                                                                                    message);
+
+                                                                    final String localDir = "/FrenzApp/Media/stickers/";
+                                                                        final String localFileName = message.getBody();
+                                                                    chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                                            "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
+
+
+                                                                    holder1.adCircleProgressRightIV.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            chatDownloadTask.cancel(true);
+                                                                            holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                                                            holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                        }
+                                                                    });
+                                                                }
+
+
+                                                                holder1.downloadRightImage.setOnClickListener(new View.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(View v) {
+
+                                                                        final ChatDownloadTask chatDownloadTask =
+                                                                                new ChatDownloadTask(context,
+                                                                                        holder1.adCircleProgressRightIV,
+                                                                                        holder1.downloadRightImage,
+                                                                                        message);
+
+                                                                        final String localDir = "/FrenzApp/Media/stickers/";
+                                                                        final String localFileName = message.getBody();
+                                                                        chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                                                "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
+
+                                                                        holder1.adCircleProgressRightIV.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View v) {
+                                                                                chatDownloadTask.cancel(true);
+                                                                                holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                                                                holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                });
+
+                                                                Glide.with(context).load("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                                        "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s").into(holder1.rightIV);
+
+                                                            } else {
+                                                                if (!(new File(message.getImageLocalLocation()).exists())) {
+                                                                    holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                    holder1.downloadRightImage.setVisibility(View.VISIBLE);
+
+                                                                    ////Check if auto download single Image is enabled
+                                                                    //// if so start downloading
+                                                                    if (Settings.autoSaveSingleImageToGallery()) {
+                                                                        final ChatDownloadTask chatDownloadTask =
+                                                                                new ChatDownloadTask(context,
+                                                                                        holder1.adCircleProgressRightIV,
+                                                                                        holder1.downloadRightImage,
+                                                                                        message);
+
+
+                                                                        final String localDir = "/FrenzApp/Media/stickers/";
+                                                                        final String localFileName = message.getBody();
+                                                                        chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                                                "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
+
+
+                                                                        holder1.adCircleProgressRightIV.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View v) {
+                                                                                chatDownloadTask.cancel(true);
+                                                                                holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                                                                holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                            }
+                                                                        });
+                                                                    }
+
+
+                                                                    holder1.downloadRightImage.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            final ChatDownloadTask chatDownloadTask =
+                                                                                    new ChatDownloadTask(context,
+                                                                                            holder1.adCircleProgressRightIV,
+                                                                                            holder1.downloadRightImage,
+                                                                                            message);
+
+                                                                            final String localDir = "/FrenzApp/Media/stickers/";
+                                                                            final String localFileName = message.getBody();
+                                                                            chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                                                    "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
+
+                                                                            holder1.adCircleProgressRightIV.setOnClickListener(new View.OnClickListener() {
+                                                                                @Override
+                                                                                public void onClick(View v) {
+                                                                                    chatDownloadTask.cancel(true);
+                                                                                    holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                                                                    holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                    Glide.with(context).load("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
+                                                                            "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s").into(holder1.rightIV);
+                                                                } else {
+                                                                    holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                    holder1.downloadRightImage.setVisibility(View.GONE);
+                                                                    if (message.getImageLocalLocation() != null
+                                                                            && !message.getImageLocalLocation().equals("")) {
+                                                                        final File image =
+                                                                                DiskCacheUtils.findInCache(message.getImageLocalLocation(),
+                                                                                        imageLoader.getDiskCache());
+                                                                        if (image != null && image.exists()) {
+                                                                            Picasso.get().load(image).into(holder1.rightIV);
+                                                                        } else {
+
+                                                                            imageLoader.loadImage("file://" + message.getImageLocalLocation(), new ImageLoadingListener() {
+                                                                                @Override
+                                                                                public void onLoadingStarted(String s, View view) {
+                                                                                    holder1.rightIV.setImageBitmap(null);
+                                                                                }
+
+                                                                                @Override
+                                                                                public void onLoadingFailed(String s, View view, FailReason failReason) {
+                                                                                    Log.e(TAG, failReason.toString());
+                                                                                }
+
+                                                                                @Override
+                                                                                public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
+                                                                                    Picasso.get().load(s).into(holder1.rightIV);
+
+                                                                                }
+
+                                                                                @Override
+                                                                                public void onLoadingCancelled(String s, View view) {
+
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    } else {
+                                                                        holder1.rightIV.setImageBitmap(null);
+                                                                    }
+
+//                                                                    holder1.rightIV.setTransitionName("photoTransition");
+//                                                                    holder1.rightIV.setOnClickListener(new View.OnClickListener() {
+//                                                                        @Override
+//                                                                        public void onClick(View view) {
+//                                                                            Intent intent = new Intent(context, ImageFFActivity.class);
+//                                                                            intent.putExtra("photoURI", "file://" + message.getImageLocalLocation());
+//                                                                            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.rightIV, holder1.rightIV.getTransitionName());
+//                                                                            context.startActivity(intent, optionsCompat.toBundle());
+//                                                                        }
+//                                                                    });
+
+                                                                }
+                                                            }
+
+                                                        } else {
+
+
+
+                                                        }
+                                                    }
 
                                                 }
 
