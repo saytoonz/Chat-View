@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -57,6 +58,8 @@ import omrecorder.OmRecorder;
 import omrecorder.PullTransport;
 import omrecorder.Recorder;
 
+import static com.sayt.chatview.adapters.MessageAdapter.pauseMediaPlayer;
+import static com.sayt.chatview.adapters.MessageAdapter.resumeMediaPlayer;
 import static com.sayt.chatview.adapters.MessageAdapter.stopMediaPlayer;
 
 public class ChatViewTestActivity extends AppCompatActivity implements ChatView.RecordingListener, PullTransport.OnAudioChunkPulledListener {
@@ -86,6 +89,8 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     private AudioSampleRate sampleRate;
     private int recorderSecondsElapsed;
     private boolean isRecording;
+    private boolean isRecordingPaused = false;
+    private boolean isStillHold = false;
     private Timer timer;
 
     @Override
@@ -111,8 +116,6 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
                 toggleRecording();
             }
         });
-
-        filePath = Environment.getExternalStorageDirectory().getPath() + "/FrenzApp/recorded_audio.wav";
         source = AudioSource.MIC;
         channel = AudioChannel.STEREO;
         sampleRate = AudioSampleRate.HZ_16000;
@@ -212,6 +215,13 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     }
 
     private void resumeRecording() {
+        if (!isRecordingPaused){
+            String location =  Environment.getExternalStorageDirectory().getPath() + "/FrenzApp/Media/Audios/Sent/Rec/";
+            File dir = new File(location);
+            if (!dir.exists())
+                dir.mkdirs();
+            filePath = location +"/FRZMGS"+System.currentTimeMillis()+".wav";
+        }
         isRecording = true;
         ImageView playPauseIcon = chatView.getPauseResumeARL().findViewById(R.id.pause_resume_imageView);
         playPauseIcon.setImageResource(R.drawable.pause_microphone_100);
@@ -223,6 +233,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
                     new PullTransport.Default(Utils.getMic(source, channel, sampleRate), this),
                     new File(filePath));
         }
+        isRecordingPaused = false;
         recorder.resumeRecording();
 
         startTimer();
@@ -232,6 +243,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
 
     private void pauseRecording() {
         isRecording = false;
+        isRecordingPaused = true;
 
         ImageView playPauseIcon = chatView.getPauseResumeARL().findViewById(R.id.pause_resume_imageView);
         playPauseIcon.setImageResource(R.drawable.play_microphone_100);
@@ -244,6 +256,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     }
 
     private void stopRecording(){
+        isRecordingPaused = false;
         recorderSecondsElapsed = 0;
         if (recorder != null) {
             recorder.stopRecording();
@@ -682,8 +695,18 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
 
     @Override
     public void onRecordingStarted() {
+        pauseMediaPlayer();
+        isStillHold = true;
         Log.e(TAG,"onRecordingStarted");
-        resumeRecording();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+             if (isStillHold){
+                 resumeRecording();
+             }
+            }
+        }, 1500);
+
     }
 
     @Override
@@ -693,18 +716,28 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
 
     @Override
     public void onRecordingCompleted() {
+        isStillHold = false;
+        isRecordingPaused = false;
         Log.e(TAG,"onRecordingCompleted");
-        stopRecording();
-        Utils.wait(100, new Runnable() {
-            @Override
-            public void run() {
-                sendAudio(Uri.parse(filePath), filePath);
-            }
-        });
+        if (recorderSecondsElapsed > 1){
+            stopRecording();
+            Utils.wait(2000, new Runnable() {
+                @Override
+                public void run() {
+                    sendAudio(Uri.parse(filePath), filePath);
+                }
+            });
+
+        }
+
+        resumeMediaPlayer();
     }
 
     @Override
     public void onRecordingCanceled() {
+        isStillHold = false;
+        isRecordingPaused = false;
+        resumeMediaPlayer();
         Log.e(TAG,"onRecordingCanceled");
     }
 

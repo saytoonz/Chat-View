@@ -100,6 +100,17 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 mediaPlayer.stop();
     }
 
+    public static void pauseMediaPlayer() {
+        if (mediaPlayer != null)
+            if (mediaPlayer.isPlaying())
+                mediaPlayer.pause();
+    }
+    public static void resumeMediaPlayer() {
+        if (mediaPlayer != null)
+            if (mediaPlayer.isPlaying())
+                mediaPlayer.start();
+    }
+
 
     @Override
     public int getItemViewType(int position) {

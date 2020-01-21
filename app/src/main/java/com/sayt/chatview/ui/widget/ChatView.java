@@ -176,14 +176,6 @@ public class ChatView extends RelativeLayout {
         this.recordingListener = recordingListener;
     }
 
-    public MaterialRippleLayout getPauseResumeARL() {
-        return pauseResumeARL;
-    }
-
-    public TextView getTimeText() {
-        return timeText;
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     private void setupRecording() {
         sendMRL.animate().scaleX(0f).scaleY(0f).setDuration(100).setInterpolator(new LinearInterpolator()).start();
@@ -596,10 +588,18 @@ public class ChatView extends RelativeLayout {
     }
 
 
-    public FrameLayout getKeyboard_container() {
-        return keyboard_container;
+
+
+
+
+
+    public MaterialRippleLayout getPauseResumeARL() {
+        return pauseResumeARL;
     }
 
+    public TextView getTimeText() {
+        return timeText;
+    }
     public EmoticonEditText getMessageET() {
         return messageET;
     }
@@ -608,13 +608,15 @@ public class ChatView extends RelativeLayout {
         return sendMRL;
     }
 
-    public MaterialRippleLayout getRecordARL() {
-        return recordARL;
-    }
-
     public MaterialRippleLayout getEmojiToggle() {
         return emojiToggle;
     }
+
+
+
+
+
+
 
     protected void init(Context context) {
 
