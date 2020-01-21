@@ -10,12 +10,13 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="2dp"
-        app:expWithParentScroll="true"
         android:id="@+id/leftEL"
-        app:expDuration = "300"
-        app:expExpandScrollTogether = "false"
         android:layout_marginRight="100dp"
-        android:layout_alignParentLeft="true">
+        android:layout_alignParentLeft="true"
+        app:expDuration = "300"
+        app:expExpandScrollTogether = "false" >
+
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
