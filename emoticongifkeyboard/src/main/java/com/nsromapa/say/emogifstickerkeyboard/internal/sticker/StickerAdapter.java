@@ -1,12 +1,16 @@
 package com.nsromapa.say.emogifstickerkeyboard.internal.sticker;
 
+import android.app.Dialog;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.nsromapa.say.R;
@@ -55,6 +59,7 @@ public class StickerAdapter extends BaseAdapter {
 
             holder = new StickerAdapter.ViewHolder();
             holder.stickerIv = v.findViewById(R.id.sticker_iv);
+
             v.setTag(holder);
         } else {
             holder = (StickerAdapter.ViewHolder) v.getTag();
@@ -72,6 +77,42 @@ public class StickerAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View view) {
                     mListener.OnListItemSelected(sticker);
+                }
+            });
+            holder.stickerIv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    final Dialog dialog = new Dialog(context);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.item_dialog_delete_sticker);
+
+                    TextView name = dialog.findViewById(R.id.name);
+                    ImageView image = dialog.findViewById(R.id.goProDialogImage);
+                    ImageView cancel_dialog = dialog.findViewById(R.id.cancel_dialog);
+                    ImageView delete = dialog.findViewById(R.id.delete);
+
+                    name.setText(context.getResources().getString(R.string.delete_item) +"" +
+                            " - "+ sticker.getName().replace(".sayt",""));
+                    cancel_dialog.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+                    delete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sticker.delete();
+                            stickers.remove(sticker);
+                            notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
+                    });
+                    Glide.with(context)
+                            .load(sticker)
+                            .into(image);
+                    dialog.show();
+                    return true;
                 }
             });
         }

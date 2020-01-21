@@ -91,7 +91,7 @@ public final class StickerFragment extends Fragment implements StickerAdapter.It
             File[] files = dir.listFiles();
            if (files != null){
                for (File file : files) {
-                   if (!file.getName().contains(".nomedia"))
+                   if (!file.getName().contains(".nomedia") && file.getName().contains("sayt"))
                        stickers.add(file);
                }
            }

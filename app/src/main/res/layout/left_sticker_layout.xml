@@ -65,7 +65,6 @@
                         android:scaleType="centerCrop"
                         android:id="@+id/leftIV"
                         android:visibility="visible"
-                        android:background="@drawable/left_iv_bg"
                         />
                     <ImageView
                         android:layout_gravity="center"
@@ -84,7 +83,8 @@
                         android:layout_height="18dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_sticker"
-                        android:elevation="10dp"/>
+                        android:elevation="10dp"
+                        android:visibility="gone"/>
 
 
                     <com.app.adprogressbarlib.AdCircleProgress

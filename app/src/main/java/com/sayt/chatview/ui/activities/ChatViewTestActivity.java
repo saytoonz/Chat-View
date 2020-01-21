@@ -348,7 +348,6 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
                     @Override
                     public void onStickerSelectListner(@NonNull File sticker) {
                         Log.d(TAG, "stickerSelected: " + sticker);
-                        Toast.makeText(ChatViewTestActivity.this, sticker.getName(), Toast.LENGTH_SHORT).show();
                         sendNewSticker(sticker);
                     }
                 });

@@ -591,7 +591,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             downloadLeftImage = view.findViewById(R.id.downloadLeftImage);
             adCircleProgressLeftIV = view.findViewById(R.id.left_image_pgb_progress);
 
-            setBackgroundColor(leftBubbleLayoutColor);
+            setBackgroundColor(context.getResources().getColor(R.color.transparent_white_percent_95));
             setSenderNameTextColor(senderNameTextColor);
             showSenderName(showSenderName);
             showLeftBubbleIcon(showLeftBubbleIcon);
@@ -609,8 +609,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         public void setBackgroundColor(int color) {
-            Drawable backgroundDrawable = DrawableCompat.wrap(leftIV.getBackground()).mutate();
-            DrawableCompat.setTint(backgroundDrawable, color);
+//            Drawable backgroundDrawable = DrawableCompat.wrap(leftIV.getBackground()).mutate();
+//            DrawableCompat.setTint(backgroundDrawable, color);
+            leftIV.setBackgroundColor(color);
         }
 
         public void setSenderNameTextColor(int color) {
@@ -661,7 +662,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             FontChanger fontChanger = new FontChanger(typeface);
             fontChanger.replaceFonts((ViewGroup) view);
-            setBackgroundColor(rightBubbleLayoutColor);
+            setBackgroundColor(context.getResources().getColor(R.color.transparent_white_percent_95));
             setSenderNameTextColor(senderNameTextColor);
             showSenderName(showSenderName);
             showRightBubbleIcon(showRightBubbleIcon);
@@ -677,8 +678,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         public void setBackgroundColor(int color) {
-            Drawable backgroundDrawable = DrawableCompat.wrap(rightIV.getBackground()).mutate();
-            DrawableCompat.setTint(backgroundDrawable, color);
+//            Drawable backgroundDrawable = DrawableCompat.wrap(rightIV.getBackground()).mutate();
+//            DrawableCompat.setTint(backgroundDrawable, color);
+            rightIV.setBackgroundColor(color);
         }
 
         public void setSenderNameTextColor(int color) {

@@ -22,4 +22,5 @@
     <string name="no_sound_found">No Sound found</string>
     <string name="go_to_stickers_shop">Go to Stickers Shop</string>
     <string name="go_to_sounds_shop">Go to Sounds Shop</string>
+    <string name="delete_item">Deleting an Item</string>
 </resources>

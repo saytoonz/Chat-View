@@ -19,6 +19,7 @@
     <!--Background colors-->
     <color name="background_dark">#E3E7E8</color>
     <color name="background_light">#EBEFF2</color>
+    <color name="transparent">#00000000</color>
 
     <!--Icon colors-->
     <color name="icon">#6B777D</color>
