@@ -58,7 +58,9 @@ public class Message {
         LeftAudio,
         RightAudio,
         LeftSticker,
-        RightSticker
+        RightSticker,
+        LeftGIF,
+        RightGIF
     }
 
     public Message(){

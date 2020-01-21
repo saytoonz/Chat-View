@@ -60,8 +60,8 @@
                     android:layout_margin="4dp"
                     android:id="@+id/leftIVCV">
                     <ImageView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="138dp"
+                        android:layout_height="138dp"
                         android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
                         android:id="@+id/leftIV"

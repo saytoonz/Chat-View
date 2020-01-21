@@ -165,6 +165,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 type = 12;
                 break;
             }
+            case LeftGIF: {
+                type = 13;
+                break;
+            }
+            case RightGIF: {
+                type = 14;
+                break;
+            }
         }
         if (type == 0) {
             throw new RuntimeException("Set Message Type ( Message Type is Null )");
@@ -247,13 +255,26 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                         viewHolder = new LeftStickerViewHolder(view);
                                                     } else {
 
-//                                                        if (viewType == 12) {
-                                                        View view = LayoutInflater.from(parent.getContext())
-                                                                .inflate(R.layout.right_sticker_layout, parent, false);
-                                                        viewHolder = new RightStickerViewHolder(view);
-//                                                        } else {
-//
-//                                                        }
+                                                        if (viewType == 12) {
+                                                            View view = LayoutInflater.from(parent.getContext())
+                                                                    .inflate(R.layout.right_sticker_layout, parent, false);
+                                                            viewHolder = new RightStickerViewHolder(view);
+                                                        } else {
+
+                                                            if (viewType == 13) {
+                                                                View view = LayoutInflater.from(parent.getContext())
+                                                                        .inflate(R.layout.left_gif_layout, parent, false);
+                                                                viewHolder = new LeftGIFViewHolder(view);
+                                                            } else {
+//                                                                if (viewType == 14) {
+                                                                    View view = LayoutInflater.from(parent.getContext())
+                                                                            .inflate(R.layout.right_gif_layout, parent, false);
+                                                                    viewHolder = new RightGIFViewHolder(view);
+//                                                                } else {
+
+//                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -568,6 +589,140 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
 
+    protected class LeftGIFViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView leftTimeTV, senderNameTV;
+        public ExpandableLayout leftEL;
+        public ImageView lefttMessageStatusIV, leftBubbleIconIV, downloadLeftImage;
+        public CardView leftBubbleIconCV;
+        public CardView leftIVCV;
+        public ImageView leftIV;
+        private AdCircleProgress adCircleProgressLeftIV;
+
+        public LeftGIFViewHolder(View view) {
+            super(view);
+
+            leftTimeTV = view.findViewById(R.id.leftTimeTV);
+            leftEL = view.findViewById(R.id.leftEL);
+            leftIV = view.findViewById(R.id.leftIV);
+            leftIVCV = view.findViewById(R.id.leftIVCV);
+            senderNameTV = view.findViewById(R.id.senderNameTV);
+            leftBubbleIconIV = view.findViewById(R.id.leftBubbleIconIV);
+            leftBubbleIconCV = view.findViewById(R.id.leftBubbleIconCV);
+            downloadLeftImage = view.findViewById(R.id.downloadLeftImage);
+            adCircleProgressLeftIV = view.findViewById(R.id.left_image_pgb_progress);
+
+            setBackgroundColor(context.getResources().getColor(R.color.transparent_white_percent_95));
+            setSenderNameTextColor(senderNameTextColor);
+            showSenderName(showSenderName);
+            showLeftBubbleIcon(showLeftBubbleIcon);
+            FontChanger fontChanger = new FontChanger(typeface);
+            fontChanger.replaceFonts((ViewGroup) view);
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    int pos = getLayoutPosition();
+
+                    return true;
+                }
+            });
+        }
+
+        public void setBackgroundColor(int color) {
+//            Drawable backgroundDrawable = DrawableCompat.wrap(leftIV.getBackground()).mutate();
+//            DrawableCompat.setTint(backgroundDrawable, color);
+            leftIV.setBackgroundColor(color);
+        }
+
+        public void setSenderNameTextColor(int color) {
+            senderNameTV.setTextColor(color);
+        }
+
+        public void showSenderName(boolean b) {
+            if (b) {
+                senderNameTV.setVisibility(View.VISIBLE);
+            } else {
+                senderNameTV.setVisibility(View.GONE);
+            }
+        }
+
+        public void showLeftBubbleIcon(boolean b) {
+            if (b) {
+                leftBubbleIconCV.setVisibility(View.VISIBLE);
+            } else {
+                leftBubbleIconCV.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    protected class RightGIFViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView rightTV, rightTimeTV, senderNameTV;
+        public ExpandableLayout rightEL;
+        public ImageView rightMessageStatusIV, rightBubbleIconIV, downloadRightImage;
+        public CardView rightBubbleIconCV;
+        public CardView rightIVCV;
+        public ImageView rightIV;
+        public AdCircleProgress adCircleProgressRightIV;
+
+        public RightGIFViewHolder(View view) {
+            super(view);
+
+
+            rightTimeTV = view.findViewById(R.id.rightTimeTV);
+            rightEL = view.findViewById(R.id.rightEL);
+            rightIV = view.findViewById(R.id.rightIV);
+            rightIVCV = view.findViewById(R.id.rightIVCV);
+            senderNameTV = view.findViewById(R.id.senderNameTV);
+            rightBubbleIconCV = view.findViewById(R.id.rightBubbleIconCV);
+            rightBubbleIconIV = view.findViewById(R.id.rightBubbleIconIV);
+            downloadRightImage = view.findViewById(R.id.downloadRightImage);
+            adCircleProgressRightIV = view.findViewById(R.id.right_image_pgb_progress);
+
+
+            FontChanger fontChanger = new FontChanger(typeface);
+            fontChanger.replaceFonts((ViewGroup) view);
+            setBackgroundColor(context.getResources().getColor(R.color.transparent_white_percent_95));
+            setSenderNameTextColor(senderNameTextColor);
+            showSenderName(showSenderName);
+            showRightBubbleIcon(showRightBubbleIcon);
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    int pos = getLayoutPosition();
+
+                    return true;
+                }
+            });
+        }
+
+        public void setBackgroundColor(int color) {
+            rightIV.setBackgroundColor(color);
+        }
+
+        public void setSenderNameTextColor(int color) {
+            senderNameTV.setTextColor(color);
+        }
+
+        public void showSenderName(boolean b) {
+            if (b) {
+                senderNameTV.setVisibility(View.VISIBLE);
+            } else {
+                senderNameTV.setVisibility(View.GONE);
+            }
+        }
+
+        public void showRightBubbleIcon(boolean b) {
+            if (b) {
+                rightBubbleIconCV.setVisibility(View.VISIBLE);
+            } else {
+                rightBubbleIconCV.setVisibility(View.GONE);
+            }
+        }
+    }
+
     protected class LeftStickerViewHolder extends RecyclerView.ViewHolder {
 
         public TextView leftTimeTV, senderNameTV;
@@ -678,8 +833,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         public void setBackgroundColor(int color) {
-//            Drawable backgroundDrawable = DrawableCompat.wrap(rightIV.getBackground()).mutate();
-//            DrawableCompat.setTint(backgroundDrawable, color);
             rightIV.setBackgroundColor(color);
         }
 
@@ -2803,7 +2956,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                                     message);
 
                                                                     final String localDir = "/FrenzApp/Media/stickers/";
-                                                                        final String localFileName = message.getBody();
+                                                                    final String localFileName = message.getBody();
                                                                     chatDownloadTask.execute("https://encrypted-tbn0.gstatic.com/images?q=tbn:" +
                                                                             "ANd9GcRFwFaTk5hkuQAO89Oy0P8Jk9GSLXpwb9b4vgO6WZ-d3iRNW3KE&s", localDir, localFileName);
 
@@ -2961,7 +3114,157 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                         } else {
 
+                                                            if (holder instanceof LeftGIFViewHolder){
+                                                                final LeftGIFViewHolder holder1 = (LeftGIFViewHolder) holder;
 
+                                                                if (message.getUserIcon() != null) {
+                                                                    Picasso.get().load(message.getUserIcon()).into(holder1.leftBubbleIconIV);
+                                                                }
+                                                                holder1.senderNameTV.setText(message.getUserName());
+                                                                holder1.leftTimeTV.setText(message.getTime());
+
+                                                                if (TextUtils.isEmpty(message.getImageLocalLocation())) {
+                                                                    holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                    holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+
+
+                                                                    holder1.downloadLeftImage.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            final ChatDownloadTask chatDownloadTask =
+                                                                                    new ChatDownloadTask(context,
+                                                                                            holder1.adCircleProgressLeftIV,
+                                                                                            holder1.downloadLeftImage,
+                                                                                            message);
+
+                                                                            final String localDir = "/FrenzApp/Media/gifs/";
+                                                                            final String localFileName = message.getBody();
+                                                                            chatDownloadTask.execute(String.valueOf(message.getImageList().get(0)),localDir, localFileName);
+
+                                                                            holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
+                                                                                @Override
+                                                                                public void onClick(View v) {
+                                                                                    chatDownloadTask.cancel(true);
+                                                                                    holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                                                                                    holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    });
+
+
+                                                                    ////Check if auto download single Image is enabled
+                                                                    //// if so start downloading
+                                                                    if (Settings.autoSaveSingleImageToGallery()) {
+                                                                        final ChatDownloadTask chatDownloadTask =
+                                                                                new ChatDownloadTask(context,
+                                                                                        holder1.adCircleProgressLeftIV,
+                                                                                        holder1.downloadLeftImage,
+                                                                                        message);
+
+                                                                        final String localDir = "/FrenzApp/Media/gifs/";
+                                                                        final String localFileName = message.getBody();
+                                                                        chatDownloadTask.execute(String.valueOf(message.getImageList().get(0)), localDir, localFileName);
+
+                                                                        holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View v) {
+                                                                                chatDownloadTask.cancel(true);
+                                                                                holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                                                                                holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                            }
+                                                                        });
+                                                                    }
+
+
+                                                                    Glide.with(context)
+                                                                            .asGif()
+                                                                            .load(String.valueOf(message.getImageList().get(0)))
+                                                                            .into(holder1.leftIV);
+                                                                } else {
+                                                                    if (!(new File(message.getImageLocalLocation()).exists())) {
+                                                                        holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                        holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+
+
+                                                                        ////Check if auto download single Image is enabled
+                                                                        //// if so start downloading
+                                                                        if (Settings.autoSaveSingleImageToGallery()) {
+                                                                            final ChatDownloadTask chatDownloadTask =
+                                                                                    new ChatDownloadTask(context,
+                                                                                            holder1.adCircleProgressLeftIV,
+                                                                                            holder1.downloadLeftImage,
+                                                                                            message);
+
+                                                                            final String localDir = "/FrenzApp/Media/gifs/";
+                                                                            final String localFileName = message.getBody();
+                                                                            chatDownloadTask.execute(String.valueOf(message.getImageList().get(0)), localDir, localFileName);
+
+
+                                                                            holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
+                                                                                @Override
+                                                                                public void onClick(View v) {
+                                                                                    chatDownloadTask.cancel(true);
+                                                                                    holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                                                                                    holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                                }
+                                                                            });
+                                                                        }
+
+
+                                                                        holder1.downloadLeftImage.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View v) {
+                                                                                final ChatDownloadTask chatDownloadTask =
+                                                                                        new ChatDownloadTask(context,
+                                                                                                holder1.adCircleProgressLeftIV,
+                                                                                                holder1.downloadLeftImage,
+                                                                                                message);
+
+
+                                                                                final String localDir = "/FrenzApp/Media/gifs/";
+                                                                                final String localFileName = message.getBody();
+                                                                                chatDownloadTask.execute(String.valueOf(message.getImageList().get(0)),
+                                                                                        localDir, localFileName);
+
+
+                                                                                holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
+                                                                                    @Override
+                                                                                    public void onClick(View v) {
+                                                                                        chatDownloadTask.cancel(true);
+                                                                                        holder1.downloadLeftImage.setVisibility(View.VISIBLE);
+                                                                                        holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                                    }
+                                                                                });
+
+                                                                            }
+                                                                        });
+
+                                                                        Glide.with(context)
+                                                                                .asGif()
+                                                                                .load(String.valueOf(message.getImageList().get(0)))
+                                                                                .into(holder1.leftIV);
+
+                                                                    } else {
+                                                                        holder1.adCircleProgressLeftIV.setVisibility(View.GONE);
+                                                                        holder1.downloadLeftImage.setVisibility(View.GONE);
+                                                                        if (message.getImageLocalLocation() != null
+                                                                                && !message.getImageLocalLocation().equals("")) {
+                                                                            Glide.with(context)
+                                                                                    .asGif()
+                                                                                    .load(message.getImageLocalLocation())
+                                                                                    .into(holder1.leftIV);
+                                                                        } else {
+                                                                            holder1.leftIV.setImageBitmap(null);
+                                                                        }
+                                                                        holder1.leftIV.setTransitionName("photoTransition");
+//
+                                                                    }
+                                                                }
+
+                                                            }else{
+
+                                                            }
 
                                                         }
                                                     }

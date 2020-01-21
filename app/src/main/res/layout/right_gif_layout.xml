@@ -48,8 +48,8 @@
                         app:cardCornerRadius="15dp"
                         android:id="@+id/rightIVCV">
                         <ImageView
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
+                            android:layout_width="138dp"
+                            android:layout_height="138dp"
                             android:scaleType="centerCrop"
                             android:adjustViewBounds="true"
                             android:id="@+id/rightIV"

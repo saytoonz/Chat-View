@@ -337,9 +337,10 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
 //                        Glide.with(ChatViewTestActivity.this)
 //                                .asGif()
 //                                .load(gif.getGifUrl())
-//                                .placeholder(R.mipmap.ic_launcher)
 //                                .into();
                         Toast.makeText(ChatViewTestActivity.this, gif.getGifUrl(), Toast.LENGTH_SHORT).show();
+
+                        sendNewGIF(gif);
                     }
                 });
 
@@ -405,6 +406,37 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
                 }
             }
         });
+    }
+
+    private void sendNewGIF(Gif gif) {
+        Log.e(TAG, "sendNewSticker: " + gif.describeContents());
+
+        mSelected.clear();
+        mSelected.add(Uri.parse(gif.getGifUrl()));
+
+        if (switchbool) {
+            Message message = new Message();
+            message.setBody(String.valueOf(System.currentTimeMillis()));
+            message.setMessageType(Message.MessageType.RightGIF);
+            message.setTime(getTime());
+            message.setUserName("Groot");
+            message.setImageLocalLocation(gif.getGifUrl());
+            message.setImageList(mSelected);
+            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
+            chatView.addMessage(message);
+            switchbool = false;
+        } else {
+            Message message = new Message();
+            message.setBody(String.valueOf(System.currentTimeMillis()));
+            message.setMessageType(Message.MessageType.LeftGIF);
+            message.setTime(getTime());
+            message.setUserName("Hodor");
+            message.setImageLocalLocation(gif.getGifUrl());
+            message.setImageList(mSelected);
+            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
+            chatView.addMessage(message);
+            switchbool = true;
+        }
     }
 
     private void sendNewSticker(File sticker) {

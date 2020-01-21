@@ -65,7 +65,8 @@ public class ChatDownloadTask extends AsyncTask<String, Integer, String> {
             File file = new File(Environment.getExternalStorageDirectory().getPath() + sUrl_fileName[1] + "/.nomedia");
             try {
                 if (!file.exists() && (sUrl_fileName[1].contains("/Sent/")
-                        || sUrl_fileName[1].contains("/sticker/") ||
+                        || sUrl_fileName[1].contains("/sticker/")
+                        || sUrl_fileName[1].contains("/gifs/") ||
                         sUrl_fileName[1].contains("/sounds/")))
                     file.createNewFile();
             } catch (IOException e) {
@@ -147,7 +148,9 @@ public class ChatDownloadTask extends AsyncTask<String, Integer, String> {
                     message.setVideoLocalLocation(result);
                 } else if (result.contains("/FrenzApp/Media/Audios/")) {
                     message.setAudioLocalLocation(result);
-                } else if (result.contains("/FrenzApp/Media/Images/")) {
+                } else if (result.contains("/FrenzApp/Media/Images/")
+                        || result.contains("/FrenzApp/Media/stickers/")
+                        || result.contains("/FrenzApp/Media/gifs/")) {
                     message.setImageLocalLocation(result);
                 }
                 updater();
