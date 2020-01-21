@@ -70,7 +70,7 @@ public class ChatView extends RelativeLayout {
     protected FrameLayout keyboard_container;
     protected RecyclerView chatRV;
     protected LinearLayout sendLL;
-    protected MaterialRippleLayout sendMRL, recordARL, stopARL;
+    protected MaterialRippleLayout sendMRL, recordARL, stopARL, pauseResumeARL;
     protected HorizontalScrollView moreHSV;
     protected MaterialRippleLayout galleryMRL, videoMRL, cameraMRL, audioMRL, emojiToggle;
     protected ExpandIconView expandIconView;
@@ -176,10 +176,16 @@ public class ChatView extends RelativeLayout {
         this.recordingListener = recordingListener;
     }
 
+    public MaterialRippleLayout getPauseResumeARL() {
+        return pauseResumeARL;
+    }
+
+    public TextView getTimeText() {
+        return timeText;
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     private void setupRecording() {
-
         sendMRL.animate().scaleX(0f).scaleY(0f).setDuration(100).setInterpolator(new LinearInterpolator()).start();
 
         messageET.addTextChangedListener(new TextWatcher() {
@@ -193,7 +199,7 @@ public class ChatView extends RelativeLayout {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().isEmpty()) {
+                if (s.toString().trim().isEmpty()) {
                     if (sendMRL.getVisibility() != View.GONE) {
                         sendMRL.setVisibility(View.GONE);
                         sendMRL.animate().scaleX(0f).scaleY(0f).setDuration(100).setInterpolator(new LinearInterpolator()).start();
@@ -380,6 +386,7 @@ public class ChatView extends RelativeLayout {
 
         if (recordingBehaviour == RecordingBehaviour.LOCKED) {
             stopARL.setVisibility(View.VISIBLE);
+            pauseResumeARL.setVisibility(View.VISIBLE);
             recordARL.setEnabled(false);
             recordARL.setFocusable(false);
 
@@ -391,10 +398,13 @@ public class ChatView extends RelativeLayout {
             timeText.setVisibility(View.INVISIBLE);
             imageViewMic.setVisibility(View.INVISIBLE);
             stopARL.setVisibility(View.GONE);
-            recordARL.setEnabled(true);
+            stopARL.setVisibility(View.GONE);
+            pauseResumeARL.setEnabled(true);
             recordARL.setFocusable(true);
+            recordARL.setAlpha(0.7f);
 
             timerTask.cancel();
+
             delete();
 
             if (recordingListener != null)
@@ -412,8 +422,10 @@ public class ChatView extends RelativeLayout {
             timeText.setVisibility(View.INVISIBLE);
             imageViewMic.setVisibility(View.INVISIBLE);
             stopARL.setVisibility(View.GONE);
+            pauseResumeARL.setVisibility(View.GONE);
             recordARL.setEnabled(true);
             recordARL.setFocusable(true);
+            recordARL.setAlpha(1f);
 
             timerTask.cancel();
 
@@ -460,7 +472,7 @@ public class ChatView extends RelativeLayout {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        timeText.setText(timeFormatter.format(new Date(audioTotalTime * 1000)));
+                       // timeText.setText(timeFormatter.format(new Date(audioTotalTime * 1000)));
                         audioTotalTime++;
                     }
                 });
@@ -621,6 +633,7 @@ public class ChatView extends RelativeLayout {
         sendMRL = rootView.findViewById(R.id.sendMRL);
         recordARL = rootView.findViewById(R.id.recordARL);
         stopARL = rootView.findViewById(R.id.stopARL);
+        pauseResumeARL = rootView.findViewById(R.id.pauseResumeMRL);
         moreHSV = rootView.findViewById(R.id.moreLL);
         messageET = rootView.findViewById(R.id.messageET);
         galleryMRL = rootView.findViewById(R.id.galleryMRL);
@@ -714,7 +727,6 @@ public class ChatView extends RelativeLayout {
     }
 
     protected void setAttributes(TypedArray attrs) {
-
         //set Attributes from xml
         showSenderLayout(attrs.getBoolean(R.styleable.ChatView_showSenderLayout, true));
         showLeftBubbleIcon(attrs.getBoolean(R.styleable.ChatView_showLeftBubbleIcon, showLeftBubbleIcon));
@@ -729,8 +741,6 @@ public class ChatView extends RelativeLayout {
         showSenderName(attrs.getBoolean(R.styleable.ChatView_showSenderName, showSenderName));
         setTextSize(attrs.getDimension(R.styleable.ChatView_textSize, 20));
         setChatViewBackgroundColor(attrs.getColor(R.styleable.ChatView_chatViewBackgroundColor, getResources().getColor(chatViewBackgroundColor)));
-
-
     }
 
     public interface OnClickGalleryButtonListener {

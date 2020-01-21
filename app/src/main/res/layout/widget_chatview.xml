@@ -83,7 +83,6 @@
                     android:layout_height="36dp"
                     android:layout_gravity="bottom"
                     android:layout_marginStart="20dp"
-                    android:layout_marginLeft="20dp"
                     android:layout_marginBottom="10dp"
                     android:background="#ffffff" />
 
@@ -92,8 +91,7 @@
                     android:layout_height="36dp"
                     android:layout_gravity="bottom"
                     android:layout_marginStart="90dp"
-                    android:layout_marginLeft="90dp"
-                    android:layout_marginBottom="10dp"
+      android:layout_marginBottom="10dp"
                     android:background="@drawable/shadow" />
 
                 <ImageView
@@ -101,7 +99,7 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_gravity="bottom"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginBottom="12dp"
                     android:paddingBottom="2dp"
                     android:src="@drawable/mic_ic"
@@ -128,7 +126,6 @@
                         android:layout_width="16dp"
                         android:layout_height="18dp"
                         android:layout_marginStart="16dp"
-                        android:layout_marginLeft="16dp"
                         android:layout_marginBottom="16dp"
                         android:src="@drawable/dustbin_wheel_ic"
                         android:visibility="visible" />
@@ -140,10 +137,8 @@
                     android:layout_height="56dp"
                     android:layout_gravity="bottom"
                     android:layout_marginStart="32dp"
-                    android:layout_marginLeft="32dp"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="0:00"
                     android:textSize="20sp"
                     android:textStyle="normal"
                     android:visibility="visible" />
@@ -445,7 +440,6 @@
         app:mrl_rippleRoundedCorners="30dp">
 
         <ImageView
-            android:id="@+id/imageAudio"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
@@ -471,7 +465,6 @@
 
         <ImageView
 
-            android:id="@+id/imageStop"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
@@ -496,7 +489,6 @@
         app:mrl_rippleRoundedCorners="30dp">
 
         <ImageView
-            android:id="@+id/imageViewSend"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
@@ -504,6 +496,29 @@
     </com.balysv.materialripple.MaterialRippleLayout>
 
 
+    <com.balysv.materialripple.MaterialRippleLayout
+        android:id="@+id/pauseResumeMRL"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_above="@id/keyboard_container"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="12dp"
+        android:elevation="40dp"
+        android:visibility="gone"
+        app:mrl_rippleOverlay="true"
+        app:mrl_rippleRoundedCorners="30dp">
+
+        <ImageView
+            android:id="@+id/pause_resume_imageView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/pause_microphone_100" />
+    </com.balysv.materialripple.MaterialRippleLayout>
 
 
 </RelativeLayout>

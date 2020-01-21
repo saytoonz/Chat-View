@@ -7,28 +7,22 @@ import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
 import com.balysv.materialripple.MaterialRippleLayout;
-import com.bumptech.glide.Glide;
 import com.nsromapa.emoticompack.samsung.SamsungEmoticonProvider;
 import com.nsromapa.gifpack.giphy.GiphyGifProvider;
 import com.nsromapa.say.emogifstickerkeyboard.EmoticonGIFKeyboardFragment;
@@ -41,8 +35,12 @@ import com.nsromapa.say.emogifstickerkeyboard.internal.sticker.StickerSelectList
 import com.nsromapa.say.emogifstickerkeyboard.widget.EmoticonEditText;
 import com.sayt.chatview.R;
 import com.sayt.chatview.helpers.PicassoEngine;
-import com.sayt.chatview.ui.widget.ChatView;
+import com.sayt.chatview.models.AudioChannel;
+import com.sayt.chatview.models.AudioSampleRate;
+import com.sayt.chatview.models.AudioSource;
 import com.sayt.chatview.models.Message;
+import com.sayt.chatview.ui.widget.ChatView;
+import com.sayt.chatview.utils.Utils;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 
@@ -51,12 +49,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import omrecorder.AudioChunk;
+import omrecorder.OmRecorder;
+import omrecorder.PullTransport;
+import omrecorder.Recorder;
 
 import static com.sayt.chatview.adapters.MessageAdapter.stopMediaPlayer;
 
-public class ChatViewTestActivity extends AppCompatActivity implements ChatView.RecordingListener{
+public class ChatViewTestActivity extends AppCompatActivity implements ChatView.RecordingListener, PullTransport.OnAudioChunkPulledListener {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "ChatViewTestActivity";
     private EmoticonGIFKeyboardFragment mEmoticonGIFKeyboardFragment;
     private static InputMethodManager inputMethodManager;
     private MediaPlayer mMediaPlayer;
@@ -65,18 +70,23 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     public static int SELECT_VIDEO = 11;
     public static int CAMERA_REQUEST = 12;
     public static int SELECT_AUDIO = 13;
-    ChatView chatView;
+    private ChatView chatView;
     boolean switchbool = true;
     List<Uri> mSelected;
     List<String> mSelectedLocal;
 
     private MaterialRippleLayout sendBtn;
-    private MaterialRippleLayout recordBtn;
     private EmoticonEditText messageEditText;
     private MaterialRippleLayout emojiKeyboardToggler;
-    private FrameLayout keyboard_container;
-    private long time;
+    private Recorder recorder;
 
+    private String filePath;
+    private AudioSource source;
+    private AudioChannel channel;
+    private AudioSampleRate sampleRate;
+    private int recorderSecondsElapsed;
+    private boolean isRecording;
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,148 +98,34 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         chatView.requestFocus();
         mSelected = new ArrayList<>();
         mSelectedLocal = new ArrayList<>();
-        recordBtn = chatView.getRecordARL();
         sendBtn = chatView.getSendMRL();
         messageEditText = chatView.getMessageET();
         emojiKeyboardToggler = chatView.getEmojiToggle();
-        keyboard_container = chatView.getKeyboard_container();
 
 
         chatView.setRecordingListener(this);
-
-//        messageEditText.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                if (s.toString().trim().length() == 0){
-//                    recordBtn.setVisibility(View.VISIBLE);
-//                    sendBtn.setVisibility(View.GONE);
-//                    sendBtn.animate().scaleX(0f).scaleY(0f).setDuration(100).setInterpolator(new LinearInterpolator()).start();
-//                    recordBtn.animate().scaleX(1f).scaleY(1f).setDuration(100).setInterpolator(new LinearInterpolator()).start();
-//
-//                }else {
-//                    recordBtn.setVisibility(View.GONE);
-//                    sendBtn.setVisibility(View.VISIBLE);
-//                    sendBtn.animate().scaleX(1f).scaleY(1f).setDuration(100).setInterpolator(new LinearInterpolator()).start();
-//                    recordBtn.animate().scaleX(0f).scaleY(0f).setDuration(100).setInterpolator(new LinearInterpolator()).start();
-//                }
-//            }
-//        });
         initializeEmojiGifStickerKeyBoard();
-        EmoticonGIFKeyboardFragment.EmoticonConfig emoticonConfig = new EmoticonGIFKeyboardFragment.EmoticonConfig()
-                .setEmoticonProvider(SamsungEmoticonProvider.create())
-                .setEmoticonSelectListener(new EmoticonSelectListener() {
-                    @Override
-                    public void emoticonSelected(Emoticon emoticon) {
-                        Log.d(TAG, "emoticonSelected: " + emoticon.getUnicode());
-                        messageEditText.append(emoticon.getUnicode(),
-                                messageEditText.getSelectionStart(),
-                                messageEditText.getSelectionEnd());
-                    }
-
-                    @Override
-                    public void onBackSpace() {
-                    }
-                });
-
-
-        EmoticonGIFKeyboardFragment.GIFConfig gifConfig = new EmoticonGIFKeyboardFragment
-                .GIFConfig(GiphyGifProvider.create(this, "564ce7370bf347f2b7c0e4746593c179"))
-                .setGifSelectListener(new GifSelectListener() {
-                    @Override
-                    public void onGifSelected(@NonNull Gif gif) {
-                        Log.d(TAG, "onGifSelected: " + gif.getGifUrl());
-//                        Glide.with(ChatViewTestActivity.this)
-//                                .asGif()
-//                                .load(gif.getGifUrl())
-//                                .placeholder(R.mipmap.ic_launcher)
-//                                .into();
-                        Toast.makeText(ChatViewTestActivity.this, gif.getGifUrl(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        EmoticonGIFKeyboardFragment.STICKERConfig stickerConfig = new EmoticonGIFKeyboardFragment.STICKERConfig()
-                .setStickerSelectedListener(new StickerSelectListener() {
-                    @Override
-                    public void onStickerSelectListner(@NonNull File sticker) {
-                        Log.d(TAG, "stickerSelected: " + sticker);
-                        Toast.makeText(ChatViewTestActivity.this, sticker.getName(), Toast.LENGTH_SHORT).show();
-//                        Glide.with(MainActivity.this)
-//                                .load(sticker)
-//                                .placeholder(R.drawable.sticker_placeholder)
-//                                .into(selectedImageView);
-                    }
-                });
-
-
-        EmoticonGIFKeyboardFragment.SoundConfig soundConfig = new EmoticonGIFKeyboardFragment.SoundConfig()
-                .setSoundImageSelectedListener(new SoundSelectListener() {
-                    @Override
-                    public void onSoundSelectListner(@NonNull File soundImage) {
-                        Log.d(TAG, "soundImage Selected: " + soundImage.getName());
-
-                        String soundName = soundImage.getName().replace(".png", ".mp3");
-                        File file = new File(Environment.getExternalStorageDirectory()
-                                .getAbsolutePath() + "/FrenzApp/Media/sounds/SoundAudios/" + soundName);
-                        if (!(file.exists()) || (!file.isFile())) {
-                            downloadSound(soundName);
-                        } else if (file.exists() && file.isFile()) {
-                            playAndSendAudio(file);
-                        } else {
-                            Toast.makeText(ChatViewTestActivity.this, "Error....", Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                });
-
-        mEmoticonGIFKeyboardFragment = EmoticonGIFKeyboardFragment
-                .getNewInstance(findViewById(R.id.keyboard_container), emoticonConfig, gifConfig, stickerConfig, soundConfig);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.keyboard_container, mEmoticonGIFKeyboardFragment)
-                .commit();
-        mEmoticonGIFKeyboardFragment.hideKeyboard();
-
-        emojiKeyboardToggler.setOnClickListener(new View.OnClickListener() {
+        chatView.getPauseResumeARL().setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if (mEmoticonGIFKeyboardFragment.isOpen()) {
-
-                    mEmoticonGIFKeyboardFragment.toggle();
-                    ImageView imageView = emojiKeyboardToggler.findViewById(R.id.emoji_keyboad_iv);
-                    imageView.setImageResource(R.drawable.ic_smiley);
-
-                    if (inputMethodManager != null) {
-                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                    }
-                } else {
-                    //Check if keyboard is open and close it if it is
-                    if (inputMethodManager.isAcceptingText()) {
-                        inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
-                    }
-
-                    ImageView imageView = emojiKeyboardToggler.findViewById(R.id.emoji_keyboad_iv);
-                    imageView.setImageResource(R.drawable.sp_ic_keyboard);
-                    mEmoticonGIFKeyboardFragment.toggle();
-                }
+            public void onClick(View v) {
+                toggleRecording();
             }
         });
+
+        filePath = Environment.getExternalStorageDirectory().getPath() + "/FrenzApp/recorded_audio.wav";
+        source = AudioSource.MIC;
+        channel = AudioChannel.STEREO;
+        sampleRate = AudioSampleRate.HZ_16000;
+
 
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(Objects.requireNonNull(messageEditText.getText()).toString().trim())) {
-                    sendMessageText(messageEditText.getText().toString().trim());
+                    String message = messageEditText.getText().toString().trim();
+                    messageEditText.setText("");
+                    sendMessageText(message);
                 }
             }
         });
@@ -315,10 +211,192 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         }
     }
 
+    private void resumeRecording() {
+        isRecording = true;
+        ImageView playPauseIcon = chatView.getPauseResumeARL().findViewById(R.id.pause_resume_imageView);
+        playPauseIcon.setImageResource(R.drawable.pause_microphone_100);
+
+        if(recorder == null) {
+            chatView.getTimeText().setText("00:00");
+
+            recorder = OmRecorder.wav(
+                    new PullTransport.Default(Utils.getMic(source, channel, sampleRate), this),
+                    new File(filePath));
+        }
+        recorder.resumeRecording();
+
+        startTimer();
+    }
+
+
+
+    private void pauseRecording() {
+        isRecording = false;
+
+        ImageView playPauseIcon = chatView.getPauseResumeARL().findViewById(R.id.pause_resume_imageView);
+        playPauseIcon.setImageResource(R.drawable.play_microphone_100);
+
+        if (recorder != null) {
+            recorder.pauseRecording();
+        }
+
+        stopTimer();
+    }
+
+    private void stopRecording(){
+        recorderSecondsElapsed = 0;
+        if (recorder != null) {
+            recorder.stopRecording();
+            recorder = null;
+        }
+        stopTimer();
+    }
+
+    public void toggleRecording() {
+//        stopPlaying();
+        Utils.wait(100, new Runnable() {
+            @Override
+            public void run() {
+                if (isRecording) {
+                    pauseRecording();
+                } else {
+                    resumeRecording();
+                }
+            }
+        });
+    }
+
+
+    private void startTimer(){
+        stopTimer();
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                updateTimer();
+            }
+        }, 0, 1000);
+    }
+
+    private void stopTimer(){
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+            timer = null;
+        }
+    }
+
+    private void updateTimer() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(isRecording) {
+                    recorderSecondsElapsed++;
+                    chatView.getTimeText().setText(Utils.formatSeconds(recorderSecondsElapsed));
+                }
+            }
+        });
+    }
+
+
 
     private void initializeEmojiGifStickerKeyBoard() {
+        EmoticonGIFKeyboardFragment.EmoticonConfig emoticonConfig = new EmoticonGIFKeyboardFragment.EmoticonConfig()
+                .setEmoticonProvider(SamsungEmoticonProvider.create())
+                .setEmoticonSelectListener(new EmoticonSelectListener() {
+                    @Override
+                    public void emoticonSelected(Emoticon emoticon) {
+                        Log.d(TAG, "emoticonSelected: " + emoticon.getUnicode());
+                        messageEditText.append(emoticon.getUnicode(),
+                                messageEditText.getSelectionStart(),
+                                messageEditText.getSelectionEnd());
+                    }
 
+                    @Override
+                    public void onBackSpace() {
+                    }
+                });
+
+
+        EmoticonGIFKeyboardFragment.GIFConfig gifConfig = new EmoticonGIFKeyboardFragment
+                .GIFConfig(GiphyGifProvider.create(this, "564ce7370bf347f2b7c0e4746593c179"))
+                .setGifSelectListener(new GifSelectListener() {
+                    @Override
+                    public void onGifSelected(@NonNull Gif gif) {
+                        Log.d(TAG, "onGifSelected: " + gif.getGifUrl());
+//                        Glide.with(ChatViewTestActivity.this)
+//                                .asGif()
+//                                .load(gif.getGifUrl())
+//                                .placeholder(R.mipmap.ic_launcher)
+//                                .into();
+                        Toast.makeText(ChatViewTestActivity.this, gif.getGifUrl(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        EmoticonGIFKeyboardFragment.STICKERConfig stickerConfig = new EmoticonGIFKeyboardFragment.STICKERConfig()
+                .setStickerSelectedListener(new StickerSelectListener() {
+                    @Override
+                    public void onStickerSelectListner(@NonNull File sticker) {
+                        Log.d(TAG, "stickerSelected: " + sticker);
+                        Toast.makeText(ChatViewTestActivity.this, sticker.getName(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+        EmoticonGIFKeyboardFragment.SoundConfig soundConfig = new EmoticonGIFKeyboardFragment.SoundConfig()
+                .setSoundImageSelectedListener(new SoundSelectListener() {
+                    @Override
+                    public void onSoundSelectListner(@NonNull File soundImage) {
+                        Log.d(TAG, "soundImage Selected: " + soundImage.getName());
+
+                        String soundName = soundImage.getName().replace(".png", ".mp3");
+                        File file = new File(Environment.getExternalStorageDirectory()
+                                .getAbsolutePath() + "/FrenzApp/Media/sounds/SoundAudios/" + soundName);
+                        if (!(file.exists()) || (!file.isFile())) {
+                            downloadSound(soundName);
+                        } else if (file.exists() && file.isFile()) {
+                            playAndSendAudio(file);
+                        } else {
+                            Toast.makeText(ChatViewTestActivity.this, "Error....", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+
+        mEmoticonGIFKeyboardFragment = EmoticonGIFKeyboardFragment
+                .getNewInstance(findViewById(R.id.keyboard_container), emoticonConfig, gifConfig, stickerConfig, soundConfig);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.keyboard_container, mEmoticonGIFKeyboardFragment)
+                .commit();
+        mEmoticonGIFKeyboardFragment.hideKeyboard();
+
+        emojiKeyboardToggler.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mEmoticonGIFKeyboardFragment.isOpen()) {
+
+                    mEmoticonGIFKeyboardFragment.toggle();
+                    ImageView imageView = emojiKeyboardToggler.findViewById(R.id.emoji_keyboad_iv);
+                    imageView.setImageResource(R.drawable.ic_smiley);
+
+                    if (inputMethodManager != null) {
+                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                    }
+                } else {
+                    //Check if keyboard is open and close it if it is
+                    if (inputMethodManager.isAcceptingText()) {
+                        inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
+                    }
+
+                    ImageView imageView = emojiKeyboardToggler.findViewById(R.id.emoji_keyboad_iv);
+                    imageView.setImageResource(R.drawable.sp_ic_keyboard);
+                    mEmoticonGIFKeyboardFragment.toggle();
+                }
+            }
+        });
     }
+
     public String getTime() {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         SimpleDateFormat mdformat = new SimpleDateFormat("dd MMM yyyy HH:mm");
@@ -470,32 +548,45 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
             }
             case 13: {
                 if (resultCode == RESULT_OK) {
-                    if (switchbool) {
-                        Message message = new Message();
-                        message.setMessageType(Message.MessageType.RightAudio);
-                        message.setTime(getTime());
-                        message.setUserName("Groot");
-                        message.setAudioUri(Objects.requireNonNull(data.getData()));
-                        message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
-                        chatView.addMessage(message);
-                        switchbool = false;
-                    } else {
-                        Message message = new Message();
-
-                        message.setMessageType(Message.MessageType.LeftAudio);
-                        message.setTime(getTime());
-                        message.setUserName("Hodor");
-                        message.setAudioUri(Objects.requireNonNull(data.getData()));
-                        message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
-                        chatView.addMessage(message);
-                        switchbool = true;
-                    }
+                    sendAudio(data.getData(),"");
                 }
                 break;
             }
         }
 
     }
+
+
+
+
+    private void sendAudio(Uri uri, String localPath){
+        if (uri == null) return;
+
+        if (switchbool) {
+            Message message = new Message();
+            message.setMessageType(Message.MessageType.RightAudio);
+            message.setTime(getTime());
+            message.setUserName("Groot");
+            message.setAudioUri(uri);
+            message.setAudioLocalLocation(localPath);
+            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
+            chatView.addMessage(message);
+            switchbool = false;
+        } else {
+            Message message = new Message();
+
+            message.setMessageType(Message.MessageType.LeftAudio);
+            message.setTime(getTime());
+            message.setUserName("Hodor");
+            message.setAudioUri(uri);
+            message.setAudioLocalLocation(localPath);
+            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
+            chatView.addMessage(message);
+            switchbool = true;
+        }
+    }
+
+
 
     public String getPathVideo(Uri uri) {
         System.out.println("getpath " + uri.toString());
@@ -581,6 +672,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         super.onStart();
         mEmoticonGIFKeyboardFragment.hideKeyboard();
     }
+
 //    @Override
 //    protected void onPause() {
 //        stopMediaPlayer();
@@ -590,46 +682,31 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
 
     @Override
     public void onRecordingStarted() {
-        showToast("started");
-        debug("started");
-
-        time = System.currentTimeMillis() / (1000);
+        Log.e(TAG,"onRecordingStarted");
+        resumeRecording();
     }
 
     @Override
     public void onRecordingLocked() {
-        showToast("locked");
-        debug("locked");
+        Log.e(TAG,"onRecordingLocked");
     }
 
     @Override
     public void onRecordingCompleted() {
-        showToast("completed");
-        debug("completed");
-
-        int recordTime = (int) ((System.currentTimeMillis() / (1000)) - time);
-
-        if (recordTime > 2) {
-            showToast(String.valueOf(recordTime));
-        }
+        Log.e(TAG,"onRecordingCompleted");
+        stopRecording();
+        Utils.wait(100, new Runnable() {
+            @Override
+            public void run() {
+                sendAudio(Uri.parse(filePath), filePath);
+            }
+        });
     }
 
     @Override
     public void onRecordingCanceled() {
-        showToast("canceled");
-        debug("canceled");
+        Log.e(TAG,"onRecordingCanceled");
     }
-
-    private void showToast(String message) {
-        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
-    private void debug(String log) {
-        Log.d("VarunJohn", log);
-    }
-
-
 
 
 
@@ -643,6 +720,12 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     public void onBackPressed() {
         if (mEmoticonGIFKeyboardFragment == null || !mEmoticonGIFKeyboardFragment.handleBackPressed())
             super.onBackPressed();
+    }
+
+    @Override
+    public void onAudioChunkPulled(AudioChunk audioChunk) {
+        float amplitude = isRecording ? (float) audioChunk.maxAmplitude() : 0f;
+//        visualizverHandler.onDataReceived(amplitude);
     }
 }
 
