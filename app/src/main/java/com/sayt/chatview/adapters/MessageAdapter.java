@@ -267,9 +267,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                 viewHolder = new LeftGIFViewHolder(view);
                                                             } else {
 //                                                                if (viewType == 14) {
-                                                                    View view = LayoutInflater.from(parent.getContext())
-                                                                            .inflate(R.layout.right_gif_layout, parent, false);
-                                                                    viewHolder = new RightGIFViewHolder(view);
+                                                                View view = LayoutInflater.from(parent.getContext())
+                                                                        .inflate(R.layout.right_gif_layout, parent, false);
+                                                                viewHolder = new RightGIFViewHolder(view);
 //                                                                } else {
 
 //                                                                }
@@ -2946,9 +2946,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                 holder1.downloadRightImage.setVisibility(View.VISIBLE);
 
 
-                                                                ////Check if auto download single Image is enabled
+                                                                ////Check if auto download stickers is enabled
                                                                 //// if so start downloading
-                                                                if (Settings.autoSaveSingleImageToGallery()) {
+                                                                if (Settings.autoSaveStickersToGallery()) {
                                                                     final ChatDownloadTask chatDownloadTask =
                                                                             new ChatDownloadTask(context,
                                                                                     holder1.adCircleProgressRightIV,
@@ -3006,9 +3006,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                     holder1.adCircleProgressRightIV.setVisibility(View.GONE);
                                                                     holder1.downloadRightImage.setVisibility(View.VISIBLE);
 
-                                                                    ////Check if auto download single Image is enabled
+                                                                    ////Check if auto download stickers is enabled
                                                                     //// if so start downloading
-                                                                    if (Settings.autoSaveSingleImageToGallery()) {
+                                                                    if (Settings.autoSaveStickersToGallery()) {
                                                                         final ChatDownloadTask chatDownloadTask =
                                                                                 new ChatDownloadTask(context,
                                                                                         holder1.adCircleProgressRightIV,
@@ -3114,7 +3114,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                         } else {
 
-                                                            if (holder instanceof LeftGIFViewHolder){
+                                                            if (holder instanceof LeftGIFViewHolder) {
                                                                 final LeftGIFViewHolder holder1 = (LeftGIFViewHolder) holder;
 
                                                                 if (message.getUserIcon() != null) {
@@ -3139,7 +3139,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                                             final String localDir = "/FrenzApp/Media/gifs/";
                                                                             final String localFileName = message.getBody();
-                                                                            chatDownloadTask.execute(String.valueOf(message.getImageList().get(0)),localDir, localFileName);
+                                                                            chatDownloadTask.execute(message.getSingleUrl(), localDir, localFileName);
 
                                                                             holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
                                                                                 @Override
@@ -3153,9 +3153,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                     });
 
 
-                                                                    ////Check if auto download single Image is enabled
+                                                                    ////Check if auto download gifs is enabled
                                                                     //// if so start downloading
-                                                                    if (Settings.autoSaveSingleImageToGallery()) {
+                                                                    if (Settings.autoSaveGifsToGallery()) {
                                                                         final ChatDownloadTask chatDownloadTask =
                                                                                 new ChatDownloadTask(context,
                                                                                         holder1.adCircleProgressLeftIV,
@@ -3164,7 +3164,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                                         final String localDir = "/FrenzApp/Media/gifs/";
                                                                         final String localFileName = message.getBody();
-                                                                        chatDownloadTask.execute(String.valueOf(message.getImageList().get(0)), localDir, localFileName);
+                                                                        chatDownloadTask.execute(message.getSingleUrl(), localDir, localFileName);
 
                                                                         holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
                                                                             @Override
@@ -3179,7 +3179,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                                     Glide.with(context)
                                                                             .asGif()
-                                                                            .load(String.valueOf(message.getImageList().get(0)))
+                                                                            .load(message.getSingleUrl())
                                                                             .into(holder1.leftIV);
                                                                 } else {
                                                                     if (!(new File(message.getImageLocalLocation()).exists())) {
@@ -3187,9 +3187,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                         holder1.downloadLeftImage.setVisibility(View.VISIBLE);
 
 
-                                                                        ////Check if auto download single Image is enabled
+                                                                        ////Check if auto download gifs is enabled
                                                                         //// if so start downloading
-                                                                        if (Settings.autoSaveSingleImageToGallery()) {
+                                                                        if (Settings.autoSaveGifsToGallery()) {
                                                                             final ChatDownloadTask chatDownloadTask =
                                                                                     new ChatDownloadTask(context,
                                                                                             holder1.adCircleProgressLeftIV,
@@ -3198,7 +3198,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                                             final String localDir = "/FrenzApp/Media/gifs/";
                                                                             final String localFileName = message.getBody();
-                                                                            chatDownloadTask.execute(String.valueOf(message.getImageList().get(0)), localDir, localFileName);
+                                                                            chatDownloadTask.execute(message.getSingleUrl(), localDir, localFileName);
 
 
                                                                             holder1.adCircleProgressLeftIV.setOnClickListener(new View.OnClickListener() {
@@ -3224,7 +3224,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                                                 final String localDir = "/FrenzApp/Media/gifs/";
                                                                                 final String localFileName = message.getBody();
-                                                                                chatDownloadTask.execute(String.valueOf(message.getImageList().get(0)),
+                                                                                chatDownloadTask.execute(message.getSingleUrl(),
                                                                                         localDir, localFileName);
 
 
@@ -3242,7 +3242,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                                                                         Glide.with(context)
                                                                                 .asGif()
-                                                                                .load(String.valueOf(message.getImageList().get(0)))
+                                                                                .load(message.getSingleUrl())
                                                                                 .into(holder1.leftIV);
 
                                                                     } else {
@@ -3257,13 +3257,187 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                         } else {
                                                                             holder1.leftIV.setImageBitmap(null);
                                                                         }
+
                                                                         holder1.leftIV.setTransitionName("photoTransition");
-//
+                                                                        holder1.leftIV.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View view) {
+                                                                                Intent intent = new Intent(context, ImageFFActivity.class);
+                                                                                intent.putExtra("photoURI", "file://" + message.getImageLocalLocation());
+                                                                                intent.putExtra("its_gif", true);
+                                                                                ActivityOptionsCompat optionsCompat =
+                                                                                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.leftIV, holder1.leftIV.getTransitionName());
+                                                                                context.startActivity(intent, optionsCompat.toBundle());
+                                                                            }
+                                                                        });
                                                                     }
                                                                 }
 
-                                                            }else{
+                                                            } else {
 
+                                                                if (holder instanceof RightGIFViewHolder) {
+                                                                    final RightGIFViewHolder holder1 = (RightGIFViewHolder) holder;
+
+                                                                    if (message.getUserIcon() != null) {
+                                                                        Picasso.get().load(message.getUserIcon()).into(holder1.rightBubbleIconIV);
+                                                                    }
+                                                                    holder1.senderNameTV.setText(message.getUserName());
+                                                                    holder1.rightTimeTV.setText(message.getTime());
+
+                                                                    if (TextUtils.isEmpty(message.getImageLocalLocation())) {
+                                                                        holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                        holder1.downloadRightImage.setVisibility(View.VISIBLE);
+
+
+                                                                        holder1.downloadRightImage.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View v) {
+                                                                                final ChatDownloadTask chatDownloadTask =
+                                                                                        new ChatDownloadTask(context,
+                                                                                                holder1.adCircleProgressRightIV,
+                                                                                                holder1.downloadRightImage,
+                                                                                                message);
+
+                                                                                final String localDir = "/FrenzApp/Media/gifs/";
+                                                                                final String localFileName = message.getBody();
+                                                                                chatDownloadTask.execute(message.getSingleUrl(), localDir, localFileName);
+
+                                                                                holder1.adCircleProgressRightIV.setOnClickListener(new View.OnClickListener() {
+                                                                                    @Override
+                                                                                    public void onClick(View v) {
+                                                                                        chatDownloadTask.cancel(true);
+                                                                                        holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                                                                        holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        });
+
+
+                                                                        ////Check if auto download gifs is enabled
+                                                                        //// if so start downloading
+                                                                        if (Settings.autoSaveGifsToGallery()) {
+                                                                            final ChatDownloadTask chatDownloadTask =
+                                                                                    new ChatDownloadTask(context,
+                                                                                            holder1.adCircleProgressRightIV,
+                                                                                            holder1.downloadRightImage,
+                                                                                            message);
+
+                                                                            final String localDir = "/FrenzApp/Media/gifs/";
+                                                                            final String localFileName = message.getBody();
+                                                                            chatDownloadTask.execute(message.getSingleUrl(), localDir, localFileName);
+
+                                                                            holder1.adCircleProgressRightIV.setOnClickListener(new View.OnClickListener() {
+                                                                                @Override
+                                                                                public void onClick(View v) {
+                                                                                    chatDownloadTask.cancel(true);
+                                                                                    holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                                                                    holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                                }
+                                                                            });
+                                                                        }
+
+
+                                                                        Glide.with(context)
+                                                                                .asGif()
+                                                                                .load(message.getSingleUrl())
+                                                                                .into(holder1.rightIV);
+                                                                    } else {
+                                                                        if (!(new File(message.getImageLocalLocation()).exists())) {
+                                                                            holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                            holder1.downloadRightImage.setVisibility(View.VISIBLE);
+
+
+                                                                            ////Check if auto download gifs is enabled
+                                                                            //// if so start downloading
+                                                                            if (Settings.autoSaveGifsToGallery()) {
+                                                                                final ChatDownloadTask chatDownloadTask =
+                                                                                        new ChatDownloadTask(context,
+                                                                                                holder1.adCircleProgressRightIV,
+                                                                                                holder1.downloadRightImage,
+                                                                                                message);
+
+                                                                                final String localDir = "/FrenzApp/Media/gifs/";
+                                                                                final String localFileName = message.getBody();
+                                                                                chatDownloadTask.execute(message.getSingleUrl(), localDir, localFileName);
+
+
+                                                                                holder1.adCircleProgressRightIV.setOnClickListener(new View.OnClickListener() {
+                                                                                    @Override
+                                                                                    public void onClick(View v) {
+                                                                                        chatDownloadTask.cancel(true);
+                                                                                        holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                                                                        holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                                    }
+                                                                                });
+                                                                            }
+
+
+                                                                            holder1.downloadRightImage.setOnClickListener(new View.OnClickListener() {
+                                                                                @Override
+                                                                                public void onClick(View v) {
+                                                                                    final ChatDownloadTask chatDownloadTask =
+                                                                                            new ChatDownloadTask(context,
+                                                                                                    holder1.adCircleProgressRightIV,
+                                                                                                    holder1.downloadRightImage,
+                                                                                                    message);
+
+
+                                                                                    final String localDir = "/FrenzApp/Media/gifs/";
+                                                                                    final String localFileName = message.getBody();
+                                                                                    chatDownloadTask.execute(message.getSingleUrl(),
+                                                                                            localDir, localFileName);
+
+
+                                                                                    holder1.adCircleProgressRightIV.setOnClickListener(new View.OnClickListener() {
+                                                                                        @Override
+                                                                                        public void onClick(View v) {
+                                                                                            chatDownloadTask.cancel(true);
+                                                                                            holder1.downloadRightImage.setVisibility(View.VISIBLE);
+                                                                                            holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                                        }
+                                                                                    });
+
+                                                                                }
+                                                                            });
+
+                                                                            Glide.with(context)
+                                                                                    .asGif()
+                                                                                    .load(message.getSingleUrl())
+                                                                                    .into(holder1.rightIV);
+
+                                                                        } else {
+                                                                            holder1.adCircleProgressRightIV.setVisibility(View.GONE);
+                                                                            holder1.downloadRightImage.setVisibility(View.GONE);
+                                                                            if (message.getImageLocalLocation() != null
+                                                                                    && !message.getImageLocalLocation().equals("")) {
+                                                                                Glide.with(context)
+                                                                                        .asGif()
+                                                                                        .load(message.getImageLocalLocation())
+                                                                                        .into(holder1.rightIV);
+                                                                            } else {
+                                                                                holder1.rightIV.setImageBitmap(null);
+                                                                            }
+
+                                                                            holder1.rightIV.setTransitionName("photoTransition");
+                                                                            holder1.rightIV.setOnClickListener(new View.OnClickListener() {
+                                                                                @Override
+                                                                                public void onClick(View view) {
+                                                                                    Intent intent = new Intent(context, ImageFFActivity.class);
+                                                                                    intent.putExtra("photoURI", "file://" + message.getImageLocalLocation());
+                                                                                    intent.putExtra("its_gif", true);
+                                                                                    ActivityOptionsCompat optionsCompat =
+                                                                                            ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.rightIV, holder1.rightIV.getTransitionName());
+                                                                                    context.startActivity(intent, optionsCompat.toBundle());
+                                                                                }
+                                                                            });
+//
+                                                                        }
+                                                                    }
+
+                                                                } else {
+
+                                                                }
                                                             }
 
                                                         }

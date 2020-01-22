@@ -334,12 +334,6 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
                     @Override
                     public void onGifSelected(@NonNull Gif gif) {
                         Log.d(TAG, "onGifSelected: " + gif.getGifUrl());
-//                        Glide.with(ChatViewTestActivity.this)
-//                                .asGif()
-//                                .load(gif.getGifUrl())
-//                                .into();
-                        Toast.makeText(ChatViewTestActivity.this, gif.getGifUrl(), Toast.LENGTH_SHORT).show();
-
                         sendNewGIF(gif);
                     }
                 });
@@ -411,28 +405,29 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     private void sendNewGIF(Gif gif) {
         Log.e(TAG, "sendNewSticker: " + gif.describeContents());
 
-        mSelected.clear();
-        mSelected.add(Uri.parse(gif.getGifUrl()));
-
+        String realNameUrl = gif.getGifUrl().replace("/giphy.gif",".gif");
+        String filename = realNameUrl.substring(realNameUrl.lastIndexOf("/")+1);
+        Log.e(TAG, "sendNewGIF: "+filename );
+        String localPath = Environment.getExternalStorageDirectory().getPath() + "/FrenzApp/Media/gifs/"+ filename;
         if (switchbool) {
             Message message = new Message();
-            message.setBody(String.valueOf(System.currentTimeMillis()));
+            message.setBody(filename);
             message.setMessageType(Message.MessageType.RightGIF);
             message.setTime(getTime());
             message.setUserName("Groot");
-            message.setImageLocalLocation(gif.getGifUrl());
-            message.setImageList(mSelected);
+            message.setImageLocalLocation(localPath);
+            message.setSingleUrl(gif.getGifUrl());
             message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
             chatView.addMessage(message);
             switchbool = false;
         } else {
             Message message = new Message();
-            message.setBody(String.valueOf(System.currentTimeMillis()));
+            message.setBody(filename);
             message.setMessageType(Message.MessageType.LeftGIF);
             message.setTime(getTime());
             message.setUserName("Hodor");
-            message.setImageLocalLocation(gif.getGifUrl());
-            message.setImageList(mSelected);
+            message.setImageLocalLocation(localPath);
+            message.setSingleUrl(gif.getGifUrl());
             message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
             chatView.addMessage(message);
             switchbool = true;

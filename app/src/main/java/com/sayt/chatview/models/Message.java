@@ -41,10 +41,19 @@ public class Message {
     protected Uri userIcon;
     protected Uri videoUri;
     protected Uri audioUri;
+    private String singleUrl;
     private String audioLocalLocation;
     private String videoLocalLocation;
     private String imageLocalLocation;
     protected int indexPosition;
+
+    public String getSingleUrl() {
+        return singleUrl;
+    }
+
+    public void setSingleUrl(String singleUrl) {
+        this.singleUrl = singleUrl;
+    }
 
     public enum MessageType{
         LeftSimpleMessage,

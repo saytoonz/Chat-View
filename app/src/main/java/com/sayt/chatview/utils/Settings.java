@@ -6,6 +6,13 @@ public class Settings {
         return false;
     }
 
+    public static boolean autoSaveStickersToGallery(){
+        return false;
+    }
+    public static boolean autoSaveGifsToGallery(){
+        return false;
+    }
+
     public static boolean autoSaveMultipleImagesToGallery(){
         return true;
     }
