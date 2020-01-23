@@ -20,7 +20,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
         android:cacheColorHint="@android:color/transparent"
-        android:numColumns="4"
+        android:numColumns="3"
         android:scrollbars="none"/>
 
     <LinearLayout

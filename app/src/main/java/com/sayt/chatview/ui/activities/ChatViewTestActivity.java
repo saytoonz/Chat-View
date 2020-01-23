@@ -1,5 +1,6 @@
 package com.sayt.chatview.ui.activities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,8 +15,11 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.bumptech.glide.Glide;
 import com.nsromapa.emoticompack.samsung.SamsungEmoticonProvider;
 import com.nsromapa.gifpack.giphy.GiphyGifProvider;
 import com.nsromapa.say.emogifstickerkeyboard.EmoticonGIFKeyboardFragment;
@@ -354,13 +359,13 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
                     public void onSoundSelectListner(@NonNull File soundImage) {
                         Log.d(TAG, "soundImage Selected: " + soundImage.getName());
 
-                        String soundName = soundImage.getName().replace(".png", ".mp3");
+                        String soundName = soundImage.getName().replace(".png", ".mp3").replace(".gif", ".mp3");
                         File file = new File(Environment.getExternalStorageDirectory()
                                 .getAbsolutePath() + "/FrenzApp/Media/sounds/SoundAudios/" + soundName);
                         if (!(file.exists()) || (!file.isFile())) {
-                            downloadSound(soundName);
+                            playAndSendAudio(file, true);
                         } else if (file.exists() && file.isFile()) {
-                            playAndSendAudio(file);
+                            playAndSendAudio(file, false);
                         } else {
                             Toast.makeText(ChatViewTestActivity.this, "Error....", Toast.LENGTH_SHORT).show();
                         }
@@ -402,13 +407,43 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         });
     }
 
-    private void sendNewGIF(Gif gif) {
-        Log.e(TAG, "sendNewSticker: " + gif.describeContents());
+    private void sendNewSound(File soundImage) {
+        Log.e(TAG, "sendNewSound: " + soundImage);
+        String realNameUrl = soundImage.getAbsolutePath().replace(".mp3", ".gif");
+        String filename = realNameUrl.substring(realNameUrl.lastIndexOf("/") + 1);
+        Log.e(TAG, "sendNewSound: " + filename);
+        String localPath = Environment.getExternalStorageDirectory().getPath() + "/FrenzApp/Media/sounds/SoundImages/" + filename;
+        if (switchbool) {
+            Message message = new Message();
+            message.setBody(filename);
+            message.setMessageType(Message.MessageType.RightSound);
+            message.setTime(getTime());
+            message.setUserName("Groot");
+            message.setImageLocalLocation(localPath);
+            message.setSingleUrl("");
+            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/groot"));
+            chatView.addMessage(message);
+            switchbool = false;
+        } else {
+            Message message = new Message();
+            message.setBody(filename);
+            message.setMessageType(Message.MessageType.LeftSound);
+            message.setTime(getTime());
+            message.setUserName("Hodor");
+            message.setImageLocalLocation(localPath);
+            message.setSingleUrl("");
+            message.setUserIcon(Uri.parse("android.resource://com.sayt.chatview/drawable/hodor"));
+            chatView.addMessage(message);
+            switchbool = true;
+        }
+    }
 
-        String realNameUrl = gif.getGifUrl().replace("/giphy.gif",".gif");
-        String filename = realNameUrl.substring(realNameUrl.lastIndexOf("/")+1);
-        Log.e(TAG, "sendNewGIF: "+filename );
-        String localPath = Environment.getExternalStorageDirectory().getPath() + "/FrenzApp/Media/gifs/"+ filename;
+
+    private void sendNewGIF(Gif gif) {
+        String realNameUrl = gif.getGifUrl().replace("/giphy.gif", ".gif");
+        String filename = realNameUrl.substring(realNameUrl.lastIndexOf("/") + 1);
+        Log.e(TAG, "sendNewGIF: " + filename);
+        String localPath = Environment.getExternalStorageDirectory().getPath() + "/FrenzApp/Media/gifs/" + filename;
         if (switchbool) {
             Message message = new Message();
             message.setBody(filename);
@@ -433,6 +468,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
             switchbool = true;
         }
     }
+
 
     private void sendNewSticker(File sticker) {
         Log.e(TAG, "sendNewSticker: " + sticker.getName());
@@ -677,53 +713,80 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     }
 
 
-    private void playAndSendAudio(final File file) {
-        final ImageView playImg = new ImageView(this);
-        playImg.setImageResource(R.drawable.eighth_note);
+    private void playAndSendAudio(final File file, boolean showDownload) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setContentView(R.layout.item_sound_option_dialog);
 
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle(" ");
-        alertDialog.setView(playImg);
-        alertDialog.setCanceledOnTouchOutside(true);
-        alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+        TextView name = dialog.findViewById(R.id.name);
+        ImageView image = dialog.findViewById(R.id.goProDialogImage);
+        ImageView sendSound = dialog.findViewById(R.id.sendSound);
+        ImageView playSound = dialog.findViewById(R.id.playSound);
+        ImageView download = dialog.findViewById(R.id.downloadSound);
+        LinearLayout downloadLayout = dialog.findViewById(R.id.downloadLayout);
+        final File soundImage = new File(file
+                .getAbsolutePath().replace("SoundAudios", "SoundImages")
+                .replace(".mp3", ".gif"));
+        name.setText("........................................................................");
+
+
+
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                mMediaPlayer.setOnCompletionListener(null);
-                mMediaPlayer.stop();
-                mMediaPlayer.release();
-            }
-        });
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Send", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mMediaPlayer.setOnCompletionListener(null);
-                mMediaPlayer.stop();
-                mMediaPlayer.release();
-                Toast.makeText(ChatViewTestActivity.this, "Send sound " + file.getName() + " as message", Toast.LENGTH_LONG).show();
-            }
-        });
-        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mMediaPlayer.setOnCompletionListener(null);
-                mMediaPlayer.stop();
-                mMediaPlayer.release();
+               if (mMediaPlayer != null){
+                   mMediaPlayer.setOnCompletionListener(null);
+                   mMediaPlayer.stop();
+                   mMediaPlayer.release();
+               }
             }
         });
 
-        playImg.setOnClickListener(new View.OnClickListener() {
+        sendSound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMediaPlayer.start();
+               if (mMediaPlayer != null){
+                   mMediaPlayer.setOnCompletionListener(null);
+                   mMediaPlayer.stop();
+                   mMediaPlayer.release();
+               }
+                dialog.dismiss();
+                sendNewSound(file);
             }
         });
 
-        alertDialog.show();
 
-        mMediaPlayer = MediaPlayer.create(ChatViewTestActivity.this, Uri.fromFile(file));
-        mMediaPlayer.setOnCompletionListener(null);
-        mMediaPlayer.start();
+        Glide.with(this)
+                .asGif()
+                .load(soundImage)
+                .into(image);
+        dialog.show();
 
+
+        if (showDownload) {
+            playSound.setVisibility(View.GONE);
+            downloadLayout.setVisibility(View.VISIBLE);
+            download.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    downloadSound(file.getName());
+                }
+            });
+        }else{
+            downloadLayout.setVisibility(View.GONE);
+            playSound.setVisibility(View.VISIBLE);
+            playSound.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mMediaPlayer.start();
+                }
+            });
+
+            mMediaPlayer = MediaPlayer.create(ChatViewTestActivity.this, Uri.fromFile(file));
+            mMediaPlayer.setOnCompletionListener(null);
+            mMediaPlayer.start();
+        }
     }
 
 
@@ -738,11 +801,11 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         mEmoticonGIFKeyboardFragment.hideKeyboard();
     }
 
-//    @Override
-//    protected void onPause() {
-//        stopMediaPlayer();
-//        super.onPause();
-//    }
+    @Override
+    protected void onPause() {
+        stopMediaPlayer();
+        super.onPause();
+    }
 
 
     @Override

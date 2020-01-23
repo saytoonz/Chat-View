@@ -69,7 +69,9 @@ public class Message {
         LeftSticker,
         RightSticker,
         LeftGIF,
-        RightGIF
+        RightGIF,
+        LeftSound,
+        RightSound
     }
 
     public Message(){

@@ -70,6 +70,7 @@ public class StickerAdapter extends BaseAdapter {
         final File sticker = stickers.get(position);
         if (sticker != null) {
             Glide.with(context)
+                    .asGif()
                     .load(stickers.get(position))
                     .into(holder.stickerIv);
 

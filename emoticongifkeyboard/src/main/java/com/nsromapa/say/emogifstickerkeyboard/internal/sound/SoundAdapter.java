@@ -1,12 +1,17 @@
 package com.nsromapa.say.emogifstickerkeyboard.internal.sound;
 
+import android.app.Dialog;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.nsromapa.say.R;
@@ -61,10 +66,10 @@ public class SoundAdapter extends BaseAdapter {
         }
 
 
-
         final File soundImage = soundImages.get(position);
         if (soundImage != null) {
             Glide.with(context)
+                    .asGif()
                     .load(soundImages.get(position))
                     .into(holder.soundIv);
 
@@ -74,10 +79,56 @@ public class SoundAdapter extends BaseAdapter {
                     mListener.OnListItemSelected(soundImage);
                 }
             });
+
+            holder.soundIv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    final Dialog dialog = new Dialog(context);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.item_dialog_delete_sticker);
+
+                    TextView name = dialog.findViewById(R.id.name);
+                    ImageView image = dialog.findViewById(R.id.goProDialogImage);
+                    ImageView cancel_dialog = dialog.findViewById(R.id.cancel_dialog);
+                    ImageView delete = dialog.findViewById(R.id.delete);
+
+                    name.setText(context.getResources().getString(R.string.delete_item) + "" +
+                            " - " + soundImages.get(position).getName().replace(".gif", ""));
+                    cancel_dialog.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+                    delete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            File sound = new File(soundImages.get(position)
+                                    .getAbsolutePath().replace("SoundImages",
+                                            "SoundAudios").replace(".gif",
+                                            ".mp3"));
+                            if (sound.exists())
+                                sound.delete();
+
+
+                            soundImages.get(position).delete();
+                            soundImages.remove(soundImages.get(position));
+                            notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
+                    });
+                    Glide.with(context)
+                            .asGif()
+                            .load(soundImages.get(position))
+                            .into(image);
+                    dialog.show();
+                    return true;
+                }
+            });
         }
         return v;
     }
-
 
 
     /**
