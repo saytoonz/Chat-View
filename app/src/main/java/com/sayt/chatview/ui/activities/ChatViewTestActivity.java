@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -317,6 +318,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initializeEmojiGifStickerKeyBoard() {
         EmoticonGIFKeyboardFragment.EmoticonConfig emoticonConfig = new EmoticonGIFKeyboardFragment.EmoticonConfig()
                 .setEmoticonProvider(SamsungEmoticonProvider.create())
@@ -405,6 +407,14 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
                     imageView.setImageResource(R.drawable.sp_ic_keyboard);
                     mEmoticonGIFKeyboardFragment.toggle();
                 }
+            }
+        });
+
+        messageEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mEmoticonGIFKeyboardFragment.hideKeyboard();
+                return false;
             }
         });
     }

@@ -3,35 +3,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sayt.chatview">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-
     <application
-        android:name="com.sayt.chatview.App"
+        android:name=".App"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:hardwareAccelerated="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity android:name=".ui.activities.ShopActivity"></activity>
         <activity android:name=".ui.activities.ImageFFActivity" />
         <activity
             android:name=".ui.activities.VideoFFActivity"
             android:configChanges="orientation|screenSize" />
-        <activity android:name="com.sayt.chatview.ui.activities.ChatViewTestActivity"
-            android:hardwareAccelerated="true"
+        <activity
+            android:name=".ui.activities.ChatViewTestActivity"
             android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,6 +41,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

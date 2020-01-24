@@ -40,6 +40,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.DiskCacheUtils;
+import com.nsromapa.emoticompack.samsung.SamsungEmoticonProvider;
+import com.nsromapa.say.emogifstickerkeyboard.widget.EmoticonTextView;
 import com.ohoussein.playpause.PlayPauseView;
 import com.sayt.chatview.R;
 import com.sayt.chatview.helpers.ChatDownloadTask;
@@ -331,7 +333,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     protected class LeftTextViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView leftTV, leftTimeTV, senderNameTV;
+        public EmoticonTextView leftTV;
+        public TextView leftTimeTV, senderNameTV;
         public ExpandableLayout leftEL;
         public ImageView lefttMessageStatusIV, leftBubbleIconIV;
         public CardView leftBubbleIconCV;
@@ -353,6 +356,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             showLeftBubbleIcon(showLeftBubbleIcon);
             setTextSize(textSize);
 
+            leftTV.setEmoticonProvider(SamsungEmoticonProvider.create());
+            leftTV.setEmoticonSize(30);
             FontChanger fontChanger = new FontChanger(typeface);
             fontChanger.replaceFonts((ViewGroup) view);
             view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -408,7 +413,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     protected class RightTextViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView rightTV, rightTimeTV, senderNameTV;
+        public EmoticonTextView rightTV;
+        public TextView rightTimeTV, senderNameTV;
         public ImageView rightMessageStatusIV, rightBubbleIconIV;
         public ExpandableLayout rightEL;
         public CardView rightBubbleIconCV;
@@ -429,6 +435,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             showSenderName(showSenderName);
             showRightBubbleIcon(showRightBubbleIcon);
             setTextSize(textSize);
+
+
+            rightTV.setEmoticonProvider(SamsungEmoticonProvider.create());
+            rightTV.setEmoticonSize(30);
             FontChanger fontChanger = new FontChanger(typeface);
             fontChanger.replaceFonts((ViewGroup) view);
 
