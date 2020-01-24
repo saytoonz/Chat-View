@@ -1,5 +1,6 @@
 package com.sayt.chatview.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -66,6 +67,7 @@ import omrecorder.Recorder;
 import static com.sayt.chatview.adapters.MessageAdapter.pauseMediaPlayer;
 import static com.sayt.chatview.adapters.MessageAdapter.resumeMediaPlayer;
 import static com.sayt.chatview.adapters.MessageAdapter.stopMediaPlayer;
+import static com.sayt.chatview.utils.Utils.downloadSoundAudio;
 
 public class ChatViewTestActivity extends AppCompatActivity implements ChatView.RecordingListener, PullTransport.OnAudioChunkPulledListener {
 
@@ -713,6 +715,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     }
 
 
+    @SuppressLint("SetTextI18n")
     private void playAndSendAudio(final File file, boolean showDownload) {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -728,7 +731,9 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
         final File soundImage = new File(file
                 .getAbsolutePath().replace("SoundAudios", "SoundImages")
                 .replace(".mp3", ".gif"));
-        name.setText("........................................................................");
+
+        name.setText("                                                       " +
+                "                                                              ");
 
 
 
@@ -770,7 +775,7 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
             download.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    downloadSound(file.getName());
+                    downloadSoundAudio(ChatViewTestActivity.this, file.getName());
                 }
             });
         }else{
@@ -790,9 +795,6 @@ public class ChatViewTestActivity extends AppCompatActivity implements ChatView.
     }
 
 
-    private void downloadSound(String soundName) {
-        Toast.makeText(this, "Download: " + soundName, Toast.LENGTH_SHORT).show();
-    }
 
 
     @Override

@@ -1,8 +1,11 @@
 package com.sayt.chatview.adapters;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
@@ -16,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -40,6 +44,7 @@ import com.ohoussein.playpause.PlayPauseView;
 import com.sayt.chatview.R;
 import com.sayt.chatview.helpers.ChatDownloadTask;
 import com.sayt.chatview.models.Message;
+import com.sayt.chatview.ui.activities.ChatViewTestActivity;
 import com.sayt.chatview.ui.activities.ImageFFActivity;
 import com.sayt.chatview.ui.activities.VideoFFActivity;
 import com.sayt.chatview.ui.views.CollageView;
@@ -50,11 +55,11 @@ import com.silencedut.expandablelayout.ExpandableLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
+import static com.sayt.chatview.utils.Utils.downloadSoundAudio;
 
 /**
  * Created by say on 16/01/20.
@@ -70,6 +75,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Typeface typeface;
 
     private static MediaPlayer mediaPlayer;
+    private static MediaPlayer mMediaPlayer;
 
     private String playingPosition;
     private boolean showLeftBubbleIcon = true;
@@ -108,7 +114,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public static void resumeMediaPlayer() {
         if (mediaPlayer != null)
-            if (mediaPlayer.isPlaying())
+            if (!mediaPlayer.isPlaying())
                 mediaPlayer.start();
     }
 
@@ -3738,16 +3744,19 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                                     holder1.leftIV.setImageBitmap(null);
                                                                                 }
 
-                                                                                holder1.leftIV.setTransitionName("photoTransition");
                                                                                 holder1.leftIV.setOnClickListener(new View.OnClickListener() {
                                                                                     @Override
                                                                                     public void onClick(View view) {
-                                                                                        Intent intent = new Intent(context, ImageFFActivity.class);
-                                                                                        intent.putExtra("photoURI", "file://" + message.getImageLocalLocation());
-                                                                                        intent.putExtra("its_gif", true);
-                                                                                        ActivityOptionsCompat optionsCompat =
-                                                                                                ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.leftIV, holder1.leftIV.getTransitionName());
-                                                                                        context.startActivity(intent, optionsCompat.toBundle());
+                                                                                        String soundName = message.getBody().replace(".png", ".mp3").replace(".gif", ".mp3");
+                                                                                        File file = new File(Environment.getExternalStorageDirectory()
+                                                                                                .getAbsolutePath() + "/FrenzApp/Media/sounds/SoundAudios/" + soundName);
+                                                                                        if (!(file.exists()) || (!file.isFile())) {
+                                                                                            playSoundAudio(file, true);
+                                                                                        } else if (file.exists() && file.isFile()) {
+                                                                                            playSoundAudio(file, false);
+                                                                                        } else {
+                                                                                            Toast.makeText(context, "Error....", Toast.LENGTH_SHORT).show();
+                                                                                        }
                                                                                     }
                                                                                 });
                                                                             }
@@ -3903,12 +3912,16 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                                                     holder1.rightIV.setOnClickListener(new View.OnClickListener() {
                                                                                         @Override
                                                                                         public void onClick(View view) {
-                                                                                            Intent intent = new Intent(context, ImageFFActivity.class);
-                                                                                            intent.putExtra("photoURI", "file://" + message.getImageLocalLocation());
-                                                                                            intent.putExtra("its_gif", true);
-                                                                                            ActivityOptionsCompat optionsCompat =
-                                                                                                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder1.rightIV, holder1.rightIV.getTransitionName());
-                                                                                            context.startActivity(intent, optionsCompat.toBundle());
+                                                                                            String soundName = message.getBody().replace(".png", ".mp3").replace(".gif", ".mp3");
+                                                                                            File file = new File(Environment.getExternalStorageDirectory()
+                                                                                                    .getAbsolutePath() + "/FrenzApp/Media/sounds/SoundAudios/" + soundName);
+                                                                                            if (!(file.exists()) || (!file.isFile())) {
+                                                                                                playSoundAudio(file, true);
+                                                                                            } else if (file.exists() && file.isFile()) {
+                                                                                                playSoundAudio(file, false);
+                                                                                            } else {
+                                                                                                Toast.makeText(context, "Error....", Toast.LENGTH_SHORT).show();
+                                                                                            }
                                                                                         }
                                                                                     });
                                                                                 }
@@ -3957,6 +3970,58 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemCount() {
         return filterList.size();
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    private void playSoundAudio(final File file, boolean showDownload) {
+        if (showDownload) {
+            final Dialog dialog = new Dialog(context);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCanceledOnTouchOutside(true);
+            dialog.setContentView(R.layout.item_sound_option_dialog);
+
+            final File soundImage = new File(file
+                    .getAbsolutePath().replace("SoundAudios", "SoundImages")
+                    .replace(".mp3", ".gif"));
+
+            TextView name = dialog.findViewById(R.id.name);
+            ImageView image = dialog.findViewById(R.id.goProDialogImage);
+            ImageView download = dialog.findViewById(R.id.downloadSound);
+            LinearLayout downloadLayout = dialog.findViewById(R.id.downloadLayout);
+            LinearLayout playSoundLayout = dialog.findViewById(R.id.playSoundLayout);
+            LinearLayout sendLayout = dialog.findViewById(R.id.sendLayout);
+            downloadLayout.setVisibility(View.VISIBLE);
+            playSoundLayout.setVisibility(View.GONE);
+            sendLayout.setVisibility(View.GONE);
+
+            name.setText("                                                       " +
+                    "                                                              ");
+
+            Glide.with(context)
+                    .asGif()
+                    .load(soundImage)
+                    .into(image);
+            dialog.show();
+
+
+            download.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    downloadSoundAudio(context, file.getName());
+                }
+            });
+
+        } else {
+            mMediaPlayer = MediaPlayer.create(context, Uri.fromFile(file));
+            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mp.release();
+                }
+            });
+            mMediaPlayer.start();
+        }
     }
 
     // set adapter filtered list

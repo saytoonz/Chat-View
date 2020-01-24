@@ -1,8 +1,10 @@
 package com.sayt.chatview.utils;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioFormat;
 import android.os.Handler;
+import android.widget.Toast;
 
 import com.sayt.chatview.models.AudioChannel;
 import com.sayt.chatview.models.AudioSampleRate;
@@ -67,4 +69,8 @@ public class Utils {
         }
     }
 
+
+    public static void downloadSoundAudio(Context context, String soundName) {
+        Toast.makeText(context, "Download: " + soundName, Toast.LENGTH_SHORT).show();
+    }
 }

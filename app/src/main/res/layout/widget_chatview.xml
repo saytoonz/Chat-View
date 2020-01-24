@@ -205,7 +205,10 @@
         android:background="@drawable/gradient1"
         android:elevation="4dp"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:focusable="true"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

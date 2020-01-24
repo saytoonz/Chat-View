@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="4dp"
-        app:cardCornerRadius="12dp"
         app:cardElevation="4dp"
         android:background="#F1EFEF">
 
@@ -58,8 +57,8 @@
                     <ImageView
                         android:id="@+id/downloadSound"
                         android:tint="#0000"
-                        android:layout_width="38dp"
-                        android:layout_height="38dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:focusable="true"
                         android:clickable="true"
                         android:src="@drawable/icons8_download_200"/>
@@ -68,6 +67,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/playSoundLayout"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -76,8 +76,8 @@
                     <ImageView
                         android:id="@+id/playSound"
                         android:tint="#0000"
-                        android:layout_width="38dp"
-                        android:layout_height="38dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:focusable="true"
                         android:clickable="true"
                         android:src="@drawable/icons8_circled_play_100"/>
@@ -85,6 +85,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/sendLayout"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -93,8 +94,8 @@
                     <ImageView
                         android:id="@+id/sendSound"
                         android:tint="@color/icon"
-                        android:layout_width="38dp"
-                        android:layout_height="38dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:focusable="true"
                         android:clickable="true"
                         android:src="@drawable/send_icon"/>
